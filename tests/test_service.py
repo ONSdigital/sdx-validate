@@ -18,13 +18,11 @@ class TestValidateService(unittest.TestCase):
 
     def test_validate_fail_sends_500(self):
 
-        # Ask posie to decode message
         r = self.app.post(self.validate_endpoint, data='rubbish')
 
         self.assertEqual(r.status_code, 500)
 
     def test_validates_json(self):
-        # Encrypt a message with the key
         message = '''{
            "type": "uk.gov.ons.edc.eq:surveyresponse",
            "origin": "uk.gov.ons.edc.eq",
