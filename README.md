@@ -18,11 +18,11 @@ Start sdx-validate service using the following command:
 
     python validate.py
 
-sdx-validate exposes a single endpoint '/validate' and by default binds to port 5000 on localhost.
+sdx-validate exposes a single endpoint '/validate' and by default binds to port 5000 on localhost. It returns a json response with attributes "valid" and "error" to indicate whether the json is valid and if not what error has been thrown during validation.
 
 ### Example
 
-The example below uses the Python library [requests](https://github.com/kennethreitz/requests) to validate some data using sdx-validate.
+The example below uses the Python library [requests](https://github.com/kennethreitz/requests) to confirm some data is valid using sdx-validate.
 
 ```python
 import requests
