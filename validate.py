@@ -18,7 +18,7 @@ def Timestamp(value):
 
 @app.errorhandler(500)
 def unknown_error(error=None):
-    app.logger.error("POSIE:DECRYPT:FAILURE '%s'", request.data.decode('UTF8'))
+    app.logger.error("sdx-validate:FAILURE '%s'", request.data.decode('UTF8'))
     message = {
         'status': 500,
         'message': "Internal server error: " + repr(error),
@@ -56,15 +56,16 @@ def validate():
     }, extra=True)
 
     try:
-        data = json.loads(request.data.decode('UTF8'))
+        data = request.get_json(force=True)
         s(data)
     except MultipleInvalid as e:
+
         app.logger.debug("sdx-validate: FAILURE: '%s'" % str(e))
 
         return jsonify({
           'valid': False,
           'error': str(e)
-        })
+        }), 400
     except Exception as e:
         return unknown_error(e)
 
