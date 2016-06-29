@@ -32,9 +32,9 @@ def ValidSurveyData(data):
     if isinstance(data, dict):
         for k, v in data.items():
             if not isinstance(k, str) or not isinstance(v, str):
-                raise ValueError('Invalid data')
+                raise ValueError('Invalid survey data')
     else:
-        raise ValueError('Invalid data')
+        raise ValueError('Invalid survey data')
 
 
 @app.errorhandler(500)
