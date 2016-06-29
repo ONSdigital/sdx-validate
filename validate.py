@@ -28,7 +28,7 @@ def ValidInstrumentId(value):
         raise ValueError('Invalid instrument id')
 
 
-def ValidData(data):
+def ValidSurveyData(data):
     if isinstance(data, dict):
         for k, v in data.items():
             if not isinstance(k, str) or not isinstance(v, str):
@@ -76,7 +76,7 @@ def validate():
         Required('submitted_at'): Timestamp,
         Required('collection'): collection_s,
         Required('metadata'): metadata_s,
-        Required('data'): ValidData
+        Required('data'): ValidSurveyData
     })
 
     try:
