@@ -2,18 +2,39 @@ from voluptuous import Schema, Required, Length, All, MultipleInvalid
 from dateutil import parser
 from flask import Flask, request, jsonify
 import settings
-import json
 import logging
 import logging.handlers
 from logging import Formatter
 
 app = Flask(__name__)
 
+KNOWN_SURVEYS = ['023']
+KNOWN_INSTRUMENTS = ['0203', '0213', '0205', '0215', '0102', '0112']
+
 
 # Parses a timestamp, throwing a value error
 # if unrecognised
 def Timestamp(value):
     return parser.parse(value)
+
+
+def ValidSurveyId(value):
+    if value not in KNOWN_SURVEYS:
+        raise ValueError('Invalid survey id')
+
+
+def ValidInstrumentId(value):
+    if value not in KNOWN_INSTRUMENTS:
+        raise ValueError('Invalid instrument id')
+
+
+def ValidSurveyData(data):
+    if isinstance(data, dict):
+        for k, v in data.items():
+            if not isinstance(k, str) or not isinstance(v, str):
+                raise ValueError('Invalid survey data')
+    else:
+        raise ValueError('Invalid survey data')
 
 
 @app.errorhandler(500)
@@ -37,8 +58,10 @@ def validate():
         app.logger.debug("sdx-validate: FAILURE: Received no data")
 
     collection_s = Schema({
-        Required('period'): str
-    }, extra=True)
+        Required('period'): str,
+        Required('exercise_sid'): str,
+        Required('instrument_id'): All(str, ValidInstrumentId)
+    })
 
     metadata_s = Schema({
         Required('user_id'): str,
@@ -49,15 +72,17 @@ def validate():
         Required('type'): "uk.gov.ons.edc.eq:surveyresponse",
         Required('version'): "0.0.1",
         Required('origin'): "uk.gov.ons.edc.eq",
-        Required('survey_id'): str,
+        Required('survey_id'): All(str, ValidSurveyId),
         Required('submitted_at'): Timestamp,
         Required('collection'): collection_s,
         Required('metadata'): metadata_s,
-    }, extra=True)
+        Required('data'): ValidSurveyData
+    })
 
     try:
-        data = request.get_json(force=True)
-        s(data)
+        json_data = request.get_json(force=True)
+        s(json_data)
+
     except MultipleInvalid as e:
 
         app.logger.debug("sdx-validate: FAILURE: '%s'" % str(e))
