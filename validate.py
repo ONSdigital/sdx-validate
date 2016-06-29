@@ -28,6 +28,15 @@ def ValidInstrumentId(value):
         raise ValueError('Invalid instrument id')
 
 
+def ValidData(data):
+    if isinstance(data, dict):
+        for k, v in data.items():
+            if not isinstance(k, str) or not isinstance(v, str):
+                raise ValueError('Invalid data')
+    else:
+        raise ValueError('Invalid data')
+
+
 @app.errorhandler(500)
 def unknown_error(error=None):
     app.logger.error("sdx-validate:FAILURE '%s'", request.data.decode('UTF8'))
@@ -67,7 +76,7 @@ def validate():
         Required('submitted_at'): Timestamp,
         Required('collection'): collection_s,
         Required('metadata'): metadata_s,
-        Required('data'): All({}, extra=True),
+        Required('data'): ValidData
     })
 
     try:
