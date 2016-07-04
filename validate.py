@@ -87,8 +87,8 @@ def validate():
         app.logger.debug("FAILURE: '%s'" % str(e))
 
         return jsonify({
-          'valid': False,
-          'error': str(e)
+            'valid': False,
+            'error': str(e)
         }), 400
     except Exception as e:
         return unknown_error(e)
