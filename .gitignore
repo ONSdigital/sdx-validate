@@ -1,5 +1,5 @@
 .DS_Store
 tests/__pycache__/
 __pycache__
-logs/
+logs/validate.log
 *.pyc
