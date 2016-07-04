@@ -3,8 +3,8 @@ from dateutil import parser
 from flask import Flask, request, jsonify
 import settings
 import logging
-import logging.handlers
 from logging import Formatter
+from settings import MakeFileHandler
 
 app = Flask(__name__)
 
@@ -39,7 +39,7 @@ def ValidSurveyData(data):
 
 @app.errorhandler(500)
 def unknown_error(error=None):
-    app.logger.error("sdx-validate:FAILURE '%s'", request.data.decode('UTF8'))
+    app.logger.error("FAILURE '%s'", request.data.decode('UTF8'))
     message = {
         'status': 500,
         'message': "Internal server error: " + repr(error),
@@ -101,7 +101,7 @@ def validate():
 if __name__ == '__main__':
     # Startup
     logging.basicConfig(level=settings.LOGGING_LEVEL, format=settings.LOGGING_FORMAT)
-    handler = logging.handlers.RotatingFileHandler(settings.LOGGING_LOCATION, maxBytes=20000, backupCount=5)
+    handler = MakeFileHandler(settings.LOGGING_LOCATION, maxBytes=20000, backupCount=5)
     handler.setFormatter(Formatter(settings.LOGGING_FORMAT))
     app.logger.addHandler(handler)
     app.run(debug=True, host='0.0.0.0')
