@@ -55,7 +55,7 @@ def validate():
     request.get_data()
 
     if not request.data:
-        app.logger.debug("sdx-validate: FAILURE: Received no data")
+        app.logger.debug("FAILURE: Received no data")
 
     collection_s = Schema({
         Required('period'): str,
@@ -85,7 +85,7 @@ def validate():
 
     except MultipleInvalid as e:
 
-        app.logger.debug("sdx-validate: FAILURE: '%s'" % str(e))
+        app.logger.debug("FAILURE: '%s'" % str(e))
 
         return jsonify({
           'valid': False,
@@ -94,7 +94,7 @@ def validate():
     except Exception as e:
         return unknown_error(e)
 
-    app.logger.debug("sdx-validate: SUCCESS")
+    app.logger.debug("SUCCESS")
 
     return jsonify({'valid': True})
 
