@@ -4,7 +4,6 @@ from flask import Flask, request, jsonify
 import settings
 import logging
 import logging.handlers
-from logging import Formatter
 
 app = Flask(__name__)
 
@@ -39,7 +38,7 @@ def ValidSurveyData(data):
 
 @app.errorhandler(500)
 def unknown_error(error=None):
-    app.logger.error("sdx-validate:FAILURE '%s'", request.data.decode('UTF8'))
+    app.logger.error("FAILURE '%s'", request.data.decode('UTF8'))
     message = {
         'status': 500,
         'message': "Internal server error: " + repr(error),
@@ -55,7 +54,7 @@ def validate():
     request.get_data()
 
     if not request.data:
-        app.logger.debug("sdx-validate: FAILURE: Received no data")
+        app.logger.debug("FAILURE: Received no data")
 
     collection_s = Schema({
         Required('period'): str,
@@ -85,16 +84,16 @@ def validate():
 
     except MultipleInvalid as e:
 
-        app.logger.debug("sdx-validate: FAILURE: '%s'" % str(e))
+        app.logger.debug("FAILURE: '%s'" % str(e))
 
         return jsonify({
-          'valid': False,
-          'error': str(e)
+            'valid': False,
+            'error': str(e)
         }), 400
     except Exception as e:
         return unknown_error(e)
 
-    app.logger.debug("sdx-validate: SUCCESS")
+    app.logger.debug("SUCCESS")
 
     return jsonify({'valid': True})
 
@@ -102,6 +101,5 @@ if __name__ == '__main__':
     # Startup
     logging.basicConfig(level=settings.LOGGING_LEVEL, format=settings.LOGGING_FORMAT)
     handler = logging.handlers.RotatingFileHandler(settings.LOGGING_LOCATION, maxBytes=20000, backupCount=5)
-    handler.setFormatter(Formatter(settings.LOGGING_FORMAT))
     app.logger.addHandler(handler)
     app.run(debug=True, host='0.0.0.0')
