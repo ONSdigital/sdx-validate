@@ -1,4 +1,4 @@
-from validate import app
+from server import app
 
 import unittest
 import json
