@@ -4,6 +4,7 @@ from flask import Flask, request, jsonify
 import settings
 import logging
 import logging.handlers
+import os
 
 app = Flask(__name__)
 
@@ -102,4 +103,5 @@ if __name__ == '__main__':
     logging.basicConfig(level=settings.LOGGING_LEVEL, format=settings.LOGGING_FORMAT)
     handler = logging.handlers.RotatingFileHandler(settings.LOGGING_LOCATION, maxBytes=20000, backupCount=5)
     app.logger.addHandler(handler)
-    app.run(debug=True, host='0.0.0.0')
+    port = int(os.getenv("PORT"))
+    app.run(debug=True, host='0.0.0.0', port=port)
