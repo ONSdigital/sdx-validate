@@ -5,8 +5,6 @@ ADD settings.py /app/settings.py
 ADD requirements.txt /app/requirements.txt
 ADD startup.sh /app/startup.sh
 
-RUN mkdir -p /app/logs
-
 # set working directory to /app/
 WORKDIR /app/
 
