@@ -24,6 +24,8 @@ def ValidSurveyId(value):
         raise ValueError('Invalid survey id')
 
 
+# Parses a UUID, throwing a value error
+# if unrecognised
 def ValidSurveyTxId(value):
     return UUID(value, version=4)
 
