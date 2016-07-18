@@ -12,6 +12,7 @@ class TestValidateService(unittest.TestCase):
        "origin": "uk.gov.ons.edc.eq",
        "survey_id": "023",
        "version": "0.0.1",
+       "tx_id": "0f534ffc-9442-414c-b39f-a756b4adc6cb",
        "collection": {
          "exercise_sid": "hfjdskf",
          "instrument_id": "0203",
@@ -101,3 +102,20 @@ class TestValidateService(unittest.TestCase):
         empty_data['data'] = ""
 
         self.check_invalid(empty_data)
+
+    def test_non_guid_tx_id_invalid(self):
+
+        wrong_tx = json.loads(self.message)
+        wrong_tx['tx_id'] = "999"
+
+        self.check_invalid(wrong_tx)
+
+        # Last character missing
+        wrong_tx['tx_id'] = "f81d4fae-7dec-11d0-a765-00a0c91e6bf"
+
+        self.check_invalid(wrong_tx)
+
+        # Wrong character at 17th position
+        wrong_tx['tx_id'] = "f81d4fae-7dec-11d0-z765-00a0c91e6bf6"
+
+        self.check_invalid(wrong_tx)

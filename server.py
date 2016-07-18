@@ -5,6 +5,7 @@ import settings
 import logging
 import logging.handlers
 import os
+from uuid import UUID
 
 app = Flask(__name__)
 
@@ -21,6 +22,10 @@ def Timestamp(value):
 def ValidSurveyId(value):
     if value not in KNOWN_SURVEYS:
         raise ValueError('Invalid survey id')
+
+
+def ValidSurveyTxId(value):
+    return UUID(value, version=4)
 
 
 def ValidInstrumentId(value):
@@ -71,6 +76,7 @@ def validate():
     s = Schema({
         Required('type'): "uk.gov.ons.edc.eq:surveyresponse",
         Required('version'): "0.0.1",
+        Required('tx_id'): All(str, ValidSurveyTxId),
         Required('origin'): "uk.gov.ons.edc.eq",
         Required('survey_id'): All(str, ValidSurveyId),
         Required('submitted_at'): Timestamp,
