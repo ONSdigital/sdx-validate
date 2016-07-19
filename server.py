@@ -1,4 +1,4 @@
-from voluptuous import Schema, Required, Length, All, MultipleInvalid
+from voluptuous import Schema, Required, Length, All, MultipleInvalid, Optional
 from dateutil import parser
 from flask import Flask, request, jsonify
 import settings
@@ -78,7 +78,7 @@ def validate():
     s = Schema({
         Required('type'): "uk.gov.ons.edc.eq:surveyresponse",
         Required('version'): "0.0.1",
-        Required('tx_id'): All(str, ValidSurveyTxId),
+        Optional('tx_id'): All(str, ValidSurveyTxId),
         Required('origin'): "uk.gov.ons.edc.eq",
         Required('survey_id'): All(str, ValidSurveyId),
         Required('submitted_at'): Timestamp,
