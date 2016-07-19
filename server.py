@@ -76,6 +76,7 @@ def validate():
     })
 
     s = Schema({
+        Optional('heartbeat'): bool,
         Required('type'): "uk.gov.ons.edc.eq:surveyresponse",
         Required('version'): "0.0.1",
         Optional('tx_id'): All(str, ValidSurveyTxId),
