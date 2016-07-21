@@ -9,8 +9,8 @@ from uuid import UUID
 
 app = Flask(__name__)
 
-KNOWN_SURVEYS = ['023']
-KNOWN_INSTRUMENTS = ['0203', '0213', '0205', '0215', '0102', '0112']
+KNOWN_SURVEYS = ['0', '023']
+KNOWN_INSTRUMENTS = ['ce2016', '0203', '0213', '0205', '0215', '0102', '0112']
 
 
 # Parses a timestamp, throwing a value error
