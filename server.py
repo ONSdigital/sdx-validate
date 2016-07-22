@@ -1,10 +1,11 @@
-from voluptuous import Schema, Required, Length, All, MultipleInvalid
+from voluptuous import Schema, Required, Length, All, MultipleInvalid, Optional
 from dateutil import parser
 from flask import Flask, request, jsonify
 import settings
 import logging
 import logging.handlers
 import os
+from uuid import UUID
 
 app = Flask(__name__)
 
@@ -21,6 +22,12 @@ def Timestamp(value):
 def ValidSurveyId(value):
     if value not in KNOWN_SURVEYS:
         raise ValueError('Invalid survey id')
+
+
+# Parses a UUID, throwing a value error
+# if unrecognised
+def ValidSurveyTxId(value):
+    return UUID(value, version=4)
 
 
 def ValidInstrumentId(value):
@@ -71,6 +78,7 @@ def validate():
     s = Schema({
         Required('type'): "uk.gov.ons.edc.eq:surveyresponse",
         Required('version'): "0.0.1",
+        Optional('tx_id'): All(str, ValidSurveyTxId),
         Required('origin'): "uk.gov.ons.edc.eq",
         Required('survey_id'): All(str, ValidSurveyId),
         Required('submitted_at'): Timestamp,

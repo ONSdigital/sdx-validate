@@ -12,6 +12,7 @@ class TestValidateService(unittest.TestCase):
        "origin": "uk.gov.ons.edc.eq",
        "survey_id": "023",
        "version": "0.0.1",
+       "tx_id": "0f534ffc-9442-414c-b39f-a756b4adc6cb",
        "collection": {
          "exercise_sid": "hfjdskf",
          "instrument_id": "0203",
@@ -50,14 +51,22 @@ class TestValidateService(unittest.TestCase):
         # propagate the exceptions to the test client
         self.app.testing = True
 
-    def check_invalid(self, data):
+    def validate_response(self, data):
 
         dumped_json = json.dumps(data)
 
         r = self.app.post(self.validate_endpoint, data=dumped_json)
         actual_response = json.loads(r.data.decode('UTF8'))
 
+        return actual_response
+
+    def assertInvalid(self, data):
+        actual_response = self.validate_response(data)
         self.assertEqual(actual_response['valid'], False)
+
+    def assertValid(self, data):
+        actual_response = self.validate_response(data)
+        self.assertEqual(actual_response['valid'], True)
 
     def test_validate_fail_sends_500(self):
 
@@ -79,25 +88,49 @@ class TestValidateService(unittest.TestCase):
         unknown_version = json.loads(self.message)
         unknown_version['version'] = "0.0.2"
 
-        self.check_invalid(unknown_version)
+        self.assertInvalid(unknown_version)
 
     def test_unknown_survey_invalid(self):
 
         unknown_survey = json.loads(self.message)
         unknown_survey['survey_id'] = "025"
 
-        self.check_invalid(unknown_survey)
+        self.assertInvalid(unknown_survey)
 
     def test_unknown_instrument_invalid(self):
 
         unknown_instrument = json.loads(self.message)
         unknown_instrument['collection']['instrument_id'] = "999"
 
-        self.check_invalid(unknown_instrument)
+        self.assertInvalid(unknown_instrument)
 
     def test_empty_data_invalid(self):
 
         empty_data = json.loads(self.message)
         empty_data['data'] = ""
 
-        self.check_invalid(empty_data)
+        self.assertInvalid(empty_data)
+
+    def test_non_guid_tx_id_invalid(self):
+
+        wrong_tx = json.loads(self.message)
+        wrong_tx['tx_id'] = "999"
+
+        self.assertInvalid(wrong_tx)
+
+        # Last character missing
+        wrong_tx['tx_id'] = "f81d4fae-7dec-11d0-a765-00a0c91e6bf"
+
+        self.assertInvalid(wrong_tx)
+
+        # Wrong character at 17th position
+        wrong_tx['tx_id'] = "f81d4fae-7dec-11d0-z765-00a0c91e6bf6"
+
+        self.assertInvalid(wrong_tx)
+
+    def test_tx_id_optional(self):
+        message = json.loads(self.message)
+
+        del message['tx_id']
+
+        self.assertValid(message)
