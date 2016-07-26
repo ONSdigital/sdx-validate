@@ -3,11 +3,15 @@ from dateutil import parser
 from flask import Flask, request, jsonify
 import settings
 import logging
-import logging.handlers
+from structlog import wrap_logger
 import os
 from uuid import UUID
 
 app = Flask(__name__)
+
+logging.basicConfig(level=settings.LOGGING_LEVEL, format=settings.LOGGING_FORMAT)
+logger = wrap_logger(logging.getLogger(__name__))
+logger.debug("START")
 
 KNOWN_SURVEYS = ['0', '023']
 KNOWN_INSTRUMENTS = ['ce2016', '0203', '0213', '0205', '0215', '0102', '0112']
@@ -44,12 +48,32 @@ def ValidSurveyData(data):
         raise ValueError('Invalid survey data')
 
 
-@app.errorhandler(500)
-def unknown_error(error=None):
-    app.logger.error("FAILURE '%s'", request.data.decode('UTF8'))
+@app.errorhandler(400)
+def errorhandler_400(e):
+    return client_error(repr(e))
+
+
+def client_error(error=None):
+    logger.error(error, request=request.data.decode('UTF8'))
     message = {
+        'valid': False,
+        'status': 400,
+        'message': error,
+        'uri': request.url
+    }
+    resp = jsonify(message)
+    resp.status_code = 400
+
+    return resp
+
+
+@app.errorhandler(500)
+def server_error(e):
+    logger.error("Server Error", exception=repr(e), request=request.data.decode('UTF8'))
+    message = {
+        'valid': False,
         'status': 500,
-        'message': "Internal server error: " + repr(error),
+        'message': "Internal server error: " + repr(e)
     }
     resp = jsonify(message)
     resp.status_code = 500
@@ -62,7 +86,7 @@ def validate():
     request.get_data()
 
     if not request.data:
-        app.logger.debug("FAILURE: Received no data")
+        return client_error("Request payload was empty")
 
     collection_s = Schema({
         Required('period'): str,
@@ -75,7 +99,7 @@ def validate():
         Required('ru_ref'): All(str, Length(12))
     })
 
-    s = Schema({
+    schema = Schema({
         Optional('heartbeat'): bool,
         Required('type'): "uk.gov.ons.edc.eq:surveyresponse",
         Required('version'): "0.0.1",
@@ -90,25 +114,26 @@ def validate():
 
     try:
         json_data = request.get_json(force=True)
-        s(json_data)
+
+        tx_id = None
+        if 'tx_id' in json_data:
+            tx_id = json_data['tx_id']
+
+        bound_logger = logger.bind(tx_id=tx_id)
+        bound_logger.debug("Validating json against schema")
+        schema(json_data)
 
     except MultipleInvalid as e:
+        return client_error(repr(e))
 
-        app.logger.debug("FAILURE: '%s'" % str(e))
-
-        return jsonify({
-            'valid': False,
-            'error': str(e)
-        }), 400
     except Exception as e:
-        return unknown_error(e)
+        return server_error(e)
 
-    app.logger.debug("SUCCESS")
+    metadata = json_data['metadata']
+    bound_logger.debug("Success", user_id=metadata['user_id'], ru_ref=metadata['ru_ref'])
 
     return jsonify({'valid': True})
 
 if __name__ == '__main__':
-    # Startup
-    logging.basicConfig(level=settings.LOGGING_LEVEL, format=settings.LOGGING_FORMAT)
     port = int(os.getenv("PORT"))
     app.run(debug=True, host='0.0.0.0', port=port)
