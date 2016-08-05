@@ -14,7 +14,7 @@ logger = wrap_logger(logging.getLogger(__name__))
 logger.debug("START")
 
 KNOWN_SURVEYS = ['0', '023']
-KNOWN_INSTRUMENTS = ['ce2016', '0203', '0213', '0205', '0215', '0102', '0112']
+KNOWN_INSTRUMENTS = ['hh2016', 'ce2016', '0203', '0213', '0205', '0215', '0102', '0112']
 
 
 # Parses a timestamp, throwing a value error
@@ -42,7 +42,7 @@ def ValidInstrumentId(value):
 def ValidSurveyData(data):
     if isinstance(data, dict):
         for k, v in data.items():
-            if not isinstance(k, str) or not isinstance(v, str):
+            if not isinstance(k, str) or not (isinstance(v, str) or isinstance(v, list)):
                 raise ValueError('Invalid survey data')
     else:
         raise ValueError('Invalid survey data')
