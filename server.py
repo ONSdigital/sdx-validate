@@ -125,7 +125,7 @@ def validate():
         schema(json_data)
 
     except MultipleInvalid as e:
-        return client_error(repr(e))
+        return client_error(str(e))
 
     except Exception as e:
         return server_error(e)
