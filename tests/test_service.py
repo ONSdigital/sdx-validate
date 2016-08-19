@@ -40,7 +40,8 @@ class TestValidateService(unittest.TestCase):
          "21": "60000",
          "27": "7400",
          "146": "some comment"
-       }
+       },
+       "paradata": {}
     }'''
 
     def setUp(self):
