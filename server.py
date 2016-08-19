@@ -109,7 +109,8 @@ def validate():
         Required('submitted_at'): Timestamp,
         Required('collection'): collection_s,
         Required('metadata'): metadata_s,
-        Required('data'): ValidSurveyData
+        Required('data'): ValidSurveyData,
+        Optional('paradata'): object
     })
 
     try:
