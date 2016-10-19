@@ -135,6 +135,12 @@ def validate():
 
     return jsonify({'valid': True})
 
+
+@app.route('/healthcheck', methods=['GET'])
+def healthcheck():
+    return jsonify({'status': 'OK'})
+
+
 if __name__ == '__main__':
     port = int(os.getenv("PORT"))
     app.run(debug=True, host='0.0.0.0', port=port)
