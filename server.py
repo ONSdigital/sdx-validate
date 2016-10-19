@@ -136,7 +136,7 @@ def validate():
     return jsonify({'valid': True})
 
 
-@app.route('/ping', methods=['GET'])
+@app.route('/healthcheck', methods=['GET'])
 def ping():
     return jsonify({'status': 'OK'})
 

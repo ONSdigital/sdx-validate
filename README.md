@@ -24,7 +24,7 @@ If you've built the image under docker, you can start using the following:
 
 sdx-validate by default binds to port 5000 on localhost and exposes two endpoints:
 - '/validate' returns a json response with attributes "valid" and "error" to indicate whether the json is valid and if not what error has been thrown during validation.
-- '/ping' acts as a healt check endpoint and returns a json response with a key/value pairs describing the service state.
+- '/healthcheck' acts as a health check endpoint and returns a json response with a key/value pairs describing the service state.
 
 ### Example
 
