@@ -54,7 +54,7 @@ def errorhandler_400(e):
 
 
 def client_error(error=None):
-    logger.error(error, request=request.data.decode('UTF8'))
+    logger.error("Validation error", exception=error)
     message = {
         'valid': False,
         'status': 400,
@@ -69,7 +69,7 @@ def client_error(error=None):
 
 @app.errorhandler(500)
 def server_error(e):
-    logger.error("Server Error", exception=repr(e), request=request.data.decode('UTF8'))
+    logger.error("Server Error", exception=repr(e))
     message = {
         'valid': False,
         'status': 500,
