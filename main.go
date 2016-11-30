@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -63,7 +62,7 @@ func main() {
 func healthcheckHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	fmt.Fprint(w, `{status":"OK"}`)
+	w.Write([]byte(`{status":"OK"}`))
 }
 
 func validateHandler(w http.ResponseWriter, r *http.Request) {
