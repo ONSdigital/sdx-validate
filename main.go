@@ -118,21 +118,16 @@ func failValidation(w http.ResponseWriter) {
 	sendReply(false, http.StatusOK, w)
 }
 
-// Reply is the reponse send to the client
-type Reply struct {
-	Valid bool `json:"valid"`
-}
-
 func sendReply(ok bool, status int, w http.ResponseWriter) {
 	log.Printf("Sending reply: %v %v", ok, status)
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
-	reply, err := json.Marshal(&Reply{Valid: ok})
+
+	reply, err := json.Marshal(map[string]bool{"valid": ok})
 	if err != nil {
 		log.Printf("Marshal fail: %v", err)
-		fmt.Fprint(w, "{\"Valid\":false}")
-		return
+		reply = []byte(`{"valid":false}`)
 	}
-	fmt.Fprint(w, string(reply))
+	w.Write(reply)
 }

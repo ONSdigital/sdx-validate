@@ -1,15 +1,9 @@
-FROM onsdigital/flask-crypto
+FROM golang:1.7
 
-ADD server.py /app/server.py
-ADD settings.py /app/settings.py
-ADD requirements.txt /app/requirements.txt
-ADD startup.sh /app/startup.sh
+ADD . /go/src/github.com/ONSDigital/sdx-validate
 
-# set working directory to /app/
-WORKDIR /app/
+RUN go install github.com/ONSDigital/sdx-validate
 
 EXPOSE 5000
 
-RUN pip3 install --no-cache-dir -U -I -r /app/requirements.txt
-
-ENTRYPOINT ./startup.sh
+ENTRYPOINT /go/bin/sdx-validate

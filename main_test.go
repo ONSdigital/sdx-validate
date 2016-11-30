@@ -53,21 +53,11 @@ var (
     }`
 )
 
-type testResult struct {
-	Code  int
-	Reply *Reply
-}
-
-type invalidItemTestSet struct {
-	Name   string
-	Field  string
-	Values []string
-}
-
-func sendToEndpoint(data string) (tr *testResult, err error) {
+func sendToEndpoint(data string) (code int, valid bool, err error) {
 	log.Println("[test] POSTING to endpoint")
 	req, err := http.NewRequest("POST", "/validate", bytes.NewBufferString(data))
 	if err != nil {
+		log.Fatal("Unable to create new HTTP request")
 		return
 	}
 
@@ -83,22 +73,22 @@ func sendToEndpoint(data string) (tr *testResult, err error) {
 		return
 	}
 
-	var r Reply
+	r := make(map[string]bool)
 	err = json.Unmarshal(body, &r)
 	if err != nil {
 		log.Fatalf("Failed to unmarshal reply: %v", err)
 		return
 	}
 
-	tr = &testResult{}
-	tr.Code = rr.Code
-	tr.Reply = &r
-
+	code = rr.Code
+	valid = r["valid"]
 	return
 }
 
-func amendSurveyValue(survey map[string]interface{}, key string, value interface{}) (string, error) {
-	surveyMap := survey
+func amendSurveyValue(data, key string, value interface{}) (string, error) {
+
+	var surveyMap map[string]interface{}
+	So(json.Unmarshal([]byte(data), &surveyMap), ShouldBeNil)
 
 	// Deal with the key being nested
 	for i, k := range strings.Split(key, ".") {
@@ -115,66 +105,70 @@ func amendSurveyValue(survey map[string]interface{}, key string, value interface
 		}
 	}
 
-	data, err := json.Marshal(surveyMap)
+	amended, err := json.Marshal(surveyMap)
 	if err != nil {
 		return "", err
 	}
-	return string(data), nil
+	return string(amended), nil
 }
 
 func TestFailSends500(t *testing.T) {
 	Convey("Should return 500 when sent non-JSON data", t, func() {
-		result, err := sendToEndpoint(`rubbish`)
+		code, valid, err := sendToEndpoint(`rubbish`)
 		if err != nil {
-			t.Fatalf("Test to endpoint failed: %v %v", err, result)
+			t.Fatalf("Test to endpoint failed: %v [%v %v]", err, code, valid)
 		}
-		So(result.Code, ShouldEqual, http.StatusInternalServerError)
-		So(result.Reply.Valid, ShouldBeFalse)
+		So(code, ShouldEqual, http.StatusInternalServerError)
+		So(valid, ShouldBeFalse)
 	})
 }
 
 func TestOKWithValidJSON(t *testing.T) {
 	Convey("Should return valid when data is valid", t, func() {
-		result, err := sendToEndpoint(goodData)
+		code, valid, err := sendToEndpoint(goodData)
 		if err != nil {
 			t.Fatalf("Sending to endpoint failed: %v", err)
 		}
-		So(result.Code, ShouldEqual, http.StatusOK)
-		So(result.Reply.Valid, ShouldBeTrue)
+		So(code, ShouldEqual, http.StatusOK)
+		So(valid, ShouldBeTrue)
 	})
 }
 
 func TestFailWhenDataEmpty(t *testing.T) {
 	Convey("When data is empty", t, func() {
-		result, err := sendToEndpoint("")
+		code, valid, err := sendToEndpoint("")
 		if err != nil {
 			t.Fatalf("Sending to endpoint failed: %v", err)
 		}
-		So(result.Code, ShouldEqual, http.StatusInternalServerError) // TODO should this be 500? Or should it be 200 OK?
-		So(result.Reply.Valid, ShouldBeFalse)
+		So(code, ShouldEqual, http.StatusInternalServerError) // TODO should this be 500? Or should it be 200 OK?
+		So(valid, ShouldBeFalse)
 	})
 }
 
 func TestTransactionIDIsOptional(t *testing.T) {
 	Convey("When sending data without transaction id (tx_id)", t, func() {
-		var s map[string]interface{}
-		So(json.Unmarshal([]byte(goodData), &s), ShouldBeNil)
 
-		sa, err := amendSurveyValue(s, "tx_id", nil)
+		sa, err := amendSurveyValue(goodData, "tx_id", nil)
 		if err != nil {
 			t.Fatalf("Error attempting to delete tx_id from survey data")
 		}
 
-		result, err := sendToEndpoint(sa)
+		code, valid, err := sendToEndpoint(sa)
 		if err != nil {
 			t.Fatalf("Sending to endpoint failed: %v", err)
 		}
-		So(result.Code, ShouldEqual, http.StatusOK)
-		So(result.Reply.Valid, ShouldBeTrue)
+		So(code, ShouldEqual, http.StatusOK)
+		So(valid, ShouldBeTrue)
 	})
 }
 
 func TestInvalidItems(t *testing.T) {
+
+	type invalidItemTestSet struct {
+		Name   string
+		Field  string
+		Values []string
+	}
 
 	ts := []invalidItemTestSet{
 		invalidItemTestSet{
@@ -195,28 +189,24 @@ func TestInvalidItems(t *testing.T) {
 	}
 
 	Convey("When using invalid values", t, func() {
-
-		var s map[string]interface{}
-		So(json.Unmarshal([]byte(goodData), &s), ShouldBeNil)
-
 		for _, set := range ts {
 			Convey(fmt.Sprintf("For %v", set.Name), func() {
 
 				for _, value := range set.Values {
-					sl, err := amendSurveyValue(s, set.Field, value)
+					sl, err := amendSurveyValue(goodData, set.Field, value)
 
 					if err != nil {
 						t.Fatalf("Error attempting to amend survey value: %v", err)
 					}
 
-					result, err := sendToEndpoint(sl)
+					code, valid, err := sendToEndpoint(sl)
 					if err != nil {
 						t.Fatalf("Error returned from endpoint: %v", err)
 					}
 
 					Convey(fmt.Sprintf("With %s set to %s", set.Field, value), func() {
-						So(result.Code, ShouldEqual, http.StatusOK)
-						So(result.Reply.Valid, ShouldBeFalse)
+						So(code, ShouldEqual, http.StatusOK)
+						So(valid, ShouldBeFalse)
 					})
 				}
 			})
@@ -226,25 +216,22 @@ func TestInvalidItems(t *testing.T) {
 
 func TestNonGUIDTransactionIDIsInvalid(t *testing.T) {
 	Convey("When submitting data", t, func() {
-		var s map[string]interface{}
-		So(json.Unmarshal([]byte(goodData), &s), ShouldBeNil)
-
 		for _, v := range []string{
 			"999", // Bad
 			"f81d4fae-7dec-11d0-a765-00a0c91e6bf",  // Last char missing
 			"f81d4fae-7dec-11d0-z765-00a0c91e6bf6", // Wrong char in 17th position}
 		} {
 			Convey(fmt.Sprintf("With tx_id of '%v'", v), func() {
-				sa, err := amendSurveyValue(s, "tx_id", v)
+				sa, err := amendSurveyValue(goodData, "tx_id", v)
 				if err != nil {
 					t.Fatalf("Error attempting to set tx_id to %v", v)
 				}
-				result, err := sendToEndpoint(sa)
+				code, valid, err := sendToEndpoint(sa)
 				if err != nil {
 					t.Fatalf("Error returned from endpoint: %v", err)
 				}
-				So(result.Code, ShouldEqual, http.StatusOK)
-				So(result.Reply.Valid, ShouldBeFalse)
+				So(code, ShouldEqual, http.StatusOK)
+				So(valid, ShouldBeFalse)
 			})
 		}
 	})
