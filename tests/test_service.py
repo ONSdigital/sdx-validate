@@ -68,8 +68,7 @@ class TestValidateService(unittest.TestCase):
              "group_id": "multiple-questions-group",
              "group_instance": 0,
              "answer_instance": 0
-            }],
-           "paradata": {}
+            }]
         }'''
     }
 
