@@ -7,42 +7,71 @@ import json
 class TestValidateService(unittest.TestCase):
 
     validate_endpoint = "/validate"
-    message = '''{
-       "tx_id": "0f534ffc-9442-414c-b39f-a756b4adc6cb",
-       "type": "uk.gov.ons.edc.eq:surveyresponse",
-       "origin": "uk.gov.ons.edc.eq",
-       "survey_id": "023",
-       "version": "0.0.1",
-       "collection": {
-         "exercise_sid": "hfjdskf",
-         "instrument_id": "0203",
-         "period": "0216"
-       },
-       "submitted_at": "2016-03-12T10:39:40Z",
-       "metadata": {
-         "user_id": "789473423",
-         "ru_ref": "12345678901A"
-       },
-       "data": {
-         "11": "01/04/2016",
-         "12": "31/10/2016",
-         "20": "1800000",
-         "51": "84",
-         "52": "10",
-         "53": "73",
-         "54": "24",
-         "50": "205",
-         "22": "705000",
-         "23": "900",
-         "24": "74",
-         "25": "50",
-         "26": "100",
-         "21": "60000",
-         "27": "7400",
-         "146": "some comment"
-       },
-       "paradata": {}
-    }'''
+    message = {
+        '0.0.1': '''{
+           "tx_id": "0f534ffc-9442-414c-b39f-a756b4adc6cb",
+           "type": "uk.gov.ons.edc.eq:surveyresponse",
+           "origin": "uk.gov.ons.edc.eq",
+           "survey_id": "023",
+           "version": "0.0.1",
+           "collection": {
+             "exercise_sid": "hfjdskf",
+             "instrument_id": "0203",
+             "period": "0216"
+           },
+           "submitted_at": "2016-03-12T10:39:40Z",
+           "metadata": {
+             "user_id": "789473423",
+             "ru_ref": "12345678901A"
+           },
+           "data": {
+             "11": "01/04/2016",
+             "12": "31/10/2016",
+             "20": "1800000",
+             "51": "84",
+             "52": "10",
+             "53": "73",
+             "54": "24",
+             "50": "205",
+             "22": "705000",
+             "23": "900",
+             "24": "74",
+             "25": "50",
+             "26": "100",
+             "21": "60000",
+             "27": "7400",
+             "146": "some comment"
+           },
+           "paradata": {}
+        }''',
+
+        '0.0.2': '''{
+           "tx_id": "0f534ffc-9442-414c-b39f-a756b4adc6cb",
+           "type": "uk.gov.ons.edc.eq:surveyresponse",
+           "origin": "uk.gov.ons.edc.eq",
+           "survey_id": "census",
+           "version": "0.0.2",
+           "collection": {
+             "exercise_sid": "hfjdskf",
+             "instrument_id": "household",
+             "period": "0216"
+           },
+           "submitted_at": "2016-03-12T10:39:40Z",
+           "metadata": {
+             "user_id": "789473423",
+             "ru_ref": "12345"
+           },
+           "data": [{
+             "value": "Joe Bloggs",
+             "block_id": "household-composition",
+             "answer_id": "household-full-name",
+             "group_id": "multiple-questions-group",
+             "group_instance": 0,
+             "answer_instance": 0
+            }],
+           "paradata": {}
+        }'''
+    }
 
     def setUp(self):
         # creates a test client
@@ -75,38 +104,38 @@ class TestValidateService(unittest.TestCase):
 
     def test_validates_json(self):
         expected_response = json.dumps({"valid": True})
-
-        r = self.app.post(self.validate_endpoint, data=self.message)
-        actual_response = json.dumps(json.loads(r.data.decode('UTF8')))
-
-        self.assertEqual(actual_response, expected_response)
+        for v in ['0.0.1', '0.0.2']:
+            m = self.message[v]
+            r = self.app.post(self.validate_endpoint, data=m)
+            actual_response = json.dumps(json.loads(r.data.decode('UTF8')))
+            self.assertEqual(actual_response, expected_response)
 
     def test_unknown_version_invalid(self):
-        unknown_version = json.loads(self.message)
-        unknown_version['version'] = "0.0.2"
+        unknown_version = json.loads(self.message['0.0.1'])
+        unknown_version['version'] = "0.0.3"
 
         self.assertInvalid(unknown_version)
 
     def test_unknown_survey_invalid(self):
-        unknown_survey = json.loads(self.message)
+        unknown_survey = json.loads(self.message['0.0.1'])
         unknown_survey['survey_id'] = "025"
 
         self.assertInvalid(unknown_survey)
 
     def test_unknown_instrument_invalid(self):
-        unknown_instrument = json.loads(self.message)
+        unknown_instrument = json.loads(self.message['0.0.1'])
         unknown_instrument['collection']['instrument_id'] = "999"
 
         self.assertInvalid(unknown_instrument)
 
     def test_empty_data_invalid(self):
-        empty_data = json.loads(self.message)
+        empty_data = json.loads(self.message['0.0.1'])
         empty_data['data'] = ""
 
         self.assertInvalid(empty_data)
 
     def test_non_guid_tx_id_invalid(self):
-        wrong_tx = json.loads(self.message)
+        wrong_tx = json.loads(self.message['0.0.1'])
         wrong_tx['tx_id'] = "999"
 
         self.assertInvalid(wrong_tx)
@@ -122,7 +151,7 @@ class TestValidateService(unittest.TestCase):
         self.assertInvalid(wrong_tx)
 
     def test_tx_id_optional(self):
-        message = json.loads(self.message)
+        message = json.loads(self.message['0.0.1'])
         del message['tx_id']
 
         self.assertValid(message)
