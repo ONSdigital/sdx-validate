@@ -87,8 +87,11 @@ func sendToEndpoint(data string) (code int, valid bool, err error) {
 
 func amendSurveyValue(data, key string, value interface{}) (string, error) {
 
-	var surveyMap map[string]interface{}
+	// var sm map[string]interface{}
+	var surveyMap, level map[string]interface{}
 	So(json.Unmarshal([]byte(data), &surveyMap), ShouldBeNil)
+
+	level = surveyMap
 
 	// Deal with the key being nested
 	for i, k := range strings.Split(key, ".") {
@@ -96,12 +99,12 @@ func amendSurveyValue(data, key string, value interface{}) (string, error) {
 		case i == strings.Count(key, "."):
 			switch value {
 			case nil:
-				delete(surveyMap, k) // if requested 'nil' then delete the key
+				delete(level, k) // if requested 'nil' then delete the key
 			default:
-				surveyMap[k] = value
+				level[k] = value
 			}
 		default:
-			surveyMap = surveyMap[k].(map[string]interface{})
+			level = level[k].(map[string]interface{})
 		}
 	}
 
@@ -109,6 +112,7 @@ func amendSurveyValue(data, key string, value interface{}) (string, error) {
 	if err != nil {
 		return "", err
 	}
+
 	return string(amended), nil
 }
 

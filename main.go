@@ -2,46 +2,13 @@ package main
 
 import (
 	"encoding/json"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
-	"regexp"
-)
 
-// Survey is the incomming survey data to validate
-type Survey struct {
-	Type        string `json:"type"`
-	Version     string `json:"version"`
-	TXID        string `json:"tx_id"`
-	Origin      string `json:"origin"`
-	SurveyID    string `json:"survey_id"`
-	SubmittedAt string `json:"submitted_at"`
-	Collection  struct {
-		Period       string `json:"period"`
-		ExerciseSID  string `json:"exercise_sid"`
-		InstrumentID string `json:"instrument_id"`
-	} `json:"collection"`
-	MetaData map[string]interface{} `json:"metadata"`
-	Data     map[string]interface{} `json:"data"`
-	Paradata map[string]interface{} `json:"paradata"`
-}
-
-var (
-	validSurveyIDs = map[string]bool{
-		"0":   true,
-		"023": true,
-	}
-
-	validInstruments = map[string]bool{
-		"hh2016": true,
-		"ce2016": true,
-		"0203":   true,
-		"0213":   true,
-		"0205":   true,
-		"0215":   true,
-		"0102":   true,
-		"0112":   true,
-	}
+	"github.com/ONSdigital/sdx-validate/schema"
+	"github.com/xeipuuv/gojsonschema"
 )
 
 func main() {
@@ -66,55 +33,40 @@ func healthcheckHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func validateHandler(w http.ResponseWriter, r *http.Request) {
-	var s Survey
-	decoder := json.NewDecoder(r.Body)
-	if err := decoder.Decode(&s); err != nil {
+
+	defer r.Body.Close()
+	j, _ := ioutil.ReadAll(r.Body)
+
+	// Check input is actually json
+	var v interface{}
+	if err := json.Unmarshal(j, &v); err != nil {
 		log.Printf("Failure decoding data json: %v", err)
 		sendReply(false, http.StatusInternalServerError, w)
 		return
 	}
-	defer r.Body.Close()
 
-	// Do the actual validation!
-	// Currently using the slightly clunky "manual validation" - should
-	// ideally use json schema properly (current python doesn't)
+	// TODO extract version numner to get schema and fail if it's
+	// not there or not valid
 
-	// Validate version
-	if s.Version != "0.0.1" {
-		log.Printf("Version '%v' not valid", s.Version)
-		failValidation(w)
+	schemaLoader := gojsonschema.NewStringLoader(schema.V0_0_1) // TODO remove hardcode
+	docLoader := gojsonschema.NewStringLoader(string(j))
+
+	result, err := gojsonschema.Validate(schemaLoader, docLoader)
+	if err != nil {
+		panic(err)
+	}
+
+	if result.Valid() {
+		log.Println("msg=\"Document is valid\"")
+		sendReply(true, http.StatusOK, w)
 		return
 	}
 
-	// Validate survey id
-	if _, ok := validSurveyIDs[s.SurveyID]; ok == false {
-		log.Printf("Survey ID '%v' not valid", s.SurveyID)
-		failValidation(w)
-		return
+	for _, desc := range result.Errors() {
+		log.Printf("%s\n", desc)
 	}
-
-	// Validate instrument id
-	if _, ok := validInstruments[s.Collection.InstrumentID]; ok == false {
-		log.Printf("Instrument ID '%v' not valid", s.Collection.InstrumentID)
-		failValidation(w)
-		return
-	}
-
-	// Validate transaction id is a valid guid (if specified - it's optional otherwise)
-	if s.TXID != "" {
-		uuid := regexp.MustCompile("^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-4[a-fA-F0-9]{3}-[8|9|aA|bB][a-fA-F0-9]{3}-[a-fA-F0-9]{12}$")
-		if !uuid.MatchString(s.TXID) {
-			log.Printf("Transaction ID '%v' not valid", s.TXID)
-			failValidation(w)
-			return
-		}
-	}
-
-	sendReply(true, http.StatusOK, w)
-}
-
-func failValidation(w http.ResponseWriter) {
 	sendReply(false, http.StatusOK, w)
+	return
 }
 
 func sendReply(ok bool, status int, w http.ResponseWriter) {
