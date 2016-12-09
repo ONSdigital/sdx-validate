@@ -41,6 +41,18 @@
 			"ImportPath": "github.com/smartystreets/goconvey/convey/reporting",
 			"Comment": "1.6.2-15-g3c25728",
 			"Rev": "3c2572876754c4669ae7417b219f0b30a29b32c7"
+		},
+		{
+			"ImportPath": "github.com/xeipuuv/gojsonpointer",
+			"Rev": "e0fe6f68307607d540ed8eac07a342c33fa1b54a"
+		},
+		{
+			"ImportPath": "github.com/xeipuuv/gojsonreference",
+			"Rev": "e02fc20de94c78484cd5ffb007f8af96be030a45"
+		},
+		{
+			"ImportPath": "github.com/xeipuuv/gojsonschema",
+			"Rev": "e18f0065e8c148fcf567ac43a3f8f5b66ac0720b"
 		}
 	]
 }
