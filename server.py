@@ -14,7 +14,7 @@ logger = wrap_logger(logging.getLogger(__name__))
 logger.debug("START")
 
 KNOWN_SURVEYS = ['0', '023', 'census']
-KNOWN_INSTRUMENTS = ['hh2016', 'ce2016', '0203', '0213', '0205', '0215', '0102', '0112', 'household', 'individual', 'communal-establishment']
+KNOWN_INSTRUMENTS = ['hh2016', 'ce2016', '0203', '0213', '0205', '0215', '0102', '0112', 'household', 'individual', 'communal']
 
 
 # Parses a timestamp, throwing a value error
