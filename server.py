@@ -13,8 +13,8 @@ logging.basicConfig(level=settings.LOGGING_LEVEL, format=settings.LOGGING_FORMAT
 logger = wrap_logger(logging.getLogger(__name__))
 logger.debug("START")
 
-KNOWN_SURVEYS = ['0', '023']
-KNOWN_INSTRUMENTS = ['hh2016', 'ce2016', '0203', '0213', '0205', '0215', '0102', '0112']
+KNOWN_SURVEYS = ['0', '023', 'census']
+KNOWN_INSTRUMENTS = ['hh2016', 'ce2016', '0203', '0213', '0205', '0215', '0102', '0112', 'household', 'individual', 'communal']
 
 
 # Parses a timestamp, throwing a value error
@@ -46,6 +46,10 @@ def ValidSurveyData(data):
                 raise ValueError('Invalid survey data')
     else:
         raise ValueError('Invalid survey data')
+
+
+def ValidateListSurveyData(data):
+    return True
 
 
 @app.errorhandler(400)
@@ -88,33 +92,14 @@ def validate():
     if not request.data:
         return client_error("Request payload was empty")
 
-    collection_s = Schema({
-        Required('period'): str,
-        Required('exercise_sid'): str,
-        Required('instrument_id'): All(str, ValidInstrumentId)
-    })
-
-    metadata_s = Schema({
-        Required('user_id'): str,
-        Required('ru_ref'): All(str, Length(12))
-    })
-
-    schema = Schema({
-        Optional('heartbeat'): bool,
-        Required('type'): "uk.gov.ons.edc.eq:surveyresponse",
-        Required('version'): "0.0.1",
-        Optional('tx_id'): All(str, ValidSurveyTxId),
-        Required('origin'): "uk.gov.ons.edc.eq",
-        Required('survey_id'): All(str, ValidSurveyId),
-        Required('submitted_at'): Timestamp,
-        Required('collection'): collection_s,
-        Required('metadata'): metadata_s,
-        Required('data'): ValidSurveyData,
-        Optional('paradata'): object
-    })
-
     try:
         json_data = request.get_json(force=True)
+
+        version = json_data['version']
+        schema = get_schema(version)
+
+        if schema is None:
+            return client_error("Unsupport schema version '%s'" % version)
 
         tx_id = None
         if 'tx_id' in json_data:
@@ -139,6 +124,66 @@ def validate():
 @app.route('/healthcheck', methods=['GET'])
 def healthcheck():
     return jsonify({'status': 'OK'})
+
+
+def get_schema(version):
+
+    if version == "0.0.1":
+        collection_s = Schema({
+            Required('period'): str,
+            Required('exercise_sid'): str,
+            Required('instrument_id'): All(str, ValidInstrumentId)
+        })
+
+        metadata_s = Schema({
+            Required('user_id'): str,
+            Required('ru_ref'): All(str, Length(12))
+        })
+
+        schema = Schema({
+            Optional('heartbeat'): bool,
+            Required('type'): "uk.gov.ons.edc.eq:surveyresponse",
+            Required('version'): "0.0.1",
+            Optional('tx_id'): All(str, ValidSurveyTxId),
+            Required('origin'): "uk.gov.ons.edc.eq",
+            Required('survey_id'): All(str, ValidSurveyId),
+            Required('submitted_at'): Timestamp,
+            Required('collection'): collection_s,
+            Required('metadata'): metadata_s,
+            Required('data'): ValidSurveyData,
+            Optional('paradata'): object
+        })
+        return schema
+
+    elif version == "0.0.2":
+        collection_s = Schema({
+            Required('period'): str,
+            Required('exercise_sid'): str,
+            Required('instrument_id'): All(str, ValidInstrumentId)
+        })
+
+        metadata_s = Schema({
+            Required('user_id'): str,
+            Required('ru_ref'): str
+        })
+
+        schema = Schema({
+            Optional('heartbeat'): bool,
+            Required('type'): "uk.gov.ons.edc.eq:surveyresponse",
+            Required('version'): "0.0.2",
+            Optional('tx_id'): All(str, ValidSurveyTxId),
+            Required('origin'): "uk.gov.ons.edc.eq",
+            Required('survey_id'): All(str, ValidSurveyId),
+            Required('submitted_at'): Timestamp,
+            Required('collection'): collection_s,
+            Required('metadata'): metadata_s,
+            Required('data'): ValidateListSurveyData,
+            Optional('paradata'): object
+        })
+        return schema
+
+    else:
+        return None
 
 
 if __name__ == '__main__':
