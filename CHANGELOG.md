@@ -1,5 +1,7 @@
 ### Unreleased
   - Add change log
+  - Update known instruments to correlate to specific surveys
+  - Add QBS details for validation
 
 ### 1.3.0 2016-12-13
   - Add support for validating version 0.0.2 schemas
