@@ -127,6 +127,20 @@ class TestValidateService(unittest.TestCase):
 
         self.assertInvalid(unknown_instrument)
 
+    def test_known_instrument_wrong_survey_invalid(self):
+        # RSI survey_id with Census instrument_id
+        known_instrument = json.loads(self.message['0.0.1'])
+        known_instrument['collection']['instrument_id'] = "household"
+
+        self.assertInvalid(known_instrument)
+
+    def test_known_instrument_correct_survey_valid(self):
+        # RSI survey_id with RSI instrument_id
+        known_instrument = json.loads(self.message['0.0.1'])
+        known_instrument['collection']['instrument_id'] = "0213"
+
+        self.assertValid(known_instrument)
+
     def test_empty_data_invalid(self):
         empty_data = json.loads(self.message['0.0.1'])
         empty_data['data'] = ""
