@@ -16,6 +16,7 @@ logger.debug("START")
 KNOWN_SURVEYS = {
     '023': ['0203', '0213', '0205', '0215', '0102', '0112'],
     '139': ['0001'],
+    '144': ['0001'],
     'census': ['household', 'individual', 'communal']
 }
 
