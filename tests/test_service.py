@@ -109,6 +109,12 @@ class TestValidateService(unittest.TestCase):
             actual_response = json.dumps(json.loads(r.data.decode('UTF8')))
             self.assertEqual(actual_response, expected_response)
 
+    def test_mwss_valid(self):
+        survey = json.loads(self.message['0.0.1'])
+        survey['survey_id'] = "134"
+        survey['collection']['instrument_id'] = "0001"
+        self.assertValid(survey)
+
     def test_unknown_version_invalid(self):
         unknown_version = json.loads(self.message['0.0.1'])
         unknown_version['version'] = "0.0.3"
