@@ -13,8 +13,13 @@ logging.basicConfig(level=settings.LOGGING_LEVEL, format=settings.LOGGING_FORMAT
 logger = wrap_logger(logging.getLogger(__name__))
 logger.debug("START")
 
-KNOWN_SURVEYS = ['0', '023', 'census']
-KNOWN_INSTRUMENTS = ['hh2016', 'ce2016', '0203', '0213', '0205', '0215', '0102', '0112', 'household', 'individual', 'communal']
+KNOWN_SURVEYS = {
+    '023': ['0203', '0213', '0205', '0215', '0102', '0112'],
+    '134': ['0001'],
+    '139': ['0001'],
+    '144': ['0001'],
+    'census': ['household', 'individual', 'communal']
+}
 
 
 # Parses a timestamp, throwing a value error
@@ -32,11 +37,6 @@ def ValidSurveyId(value):
 # if unrecognised
 def ValidSurveyTxId(value):
     return UUID(value, version=4)
-
-
-def ValidInstrumentId(value):
-    if value not in KNOWN_INSTRUMENTS:
-        raise ValueError('Invalid instrument id')
 
 
 def ValidSurveyData(data):
@@ -99,7 +99,7 @@ def validate():
         schema = get_schema(version)
 
         if schema is None:
-            return client_error("Unsupport schema version '%s'" % version)
+            return client_error("Unsupported schema version '%s'" % version)
 
         tx_id = None
         if 'tx_id' in json_data:
@@ -108,6 +108,14 @@ def validate():
         bound_logger = logger.bind(tx_id=tx_id)
         bound_logger.debug("Validating json against schema")
         schema(json_data)
+
+        survey_id = json_data['survey_id']
+        if survey_id not in KNOWN_SURVEYS:
+            return client_error("Unsupported survey '%s'" % survey_id)
+
+        instrument_id = json_data['collection']['instrument_id']
+        if instrument_id not in KNOWN_SURVEYS[survey_id]:
+            return client_error("Unsupported instrument '%s'" % instrument_id)
 
     except MultipleInvalid as e:
         return client_error(str(e))
@@ -132,7 +140,7 @@ def get_schema(version):
         collection_s = Schema({
             Required('period'): str,
             Required('exercise_sid'): str,
-            Required('instrument_id'): All(str, ValidInstrumentId)
+            Required('instrument_id'): All(str, Length(max=4))
         })
 
         metadata_s = Schema({
@@ -159,7 +167,7 @@ def get_schema(version):
         collection_s = Schema({
             Required('period'): str,
             Required('exercise_sid'): str,
-            Required('instrument_id'): All(str, ValidInstrumentId)
+            Required('instrument_id'): All(str, Length(max=10))
         })
 
         metadata_s = Schema({

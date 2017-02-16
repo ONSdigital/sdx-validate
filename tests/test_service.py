@@ -109,6 +109,12 @@ class TestValidateService(unittest.TestCase):
             actual_response = json.dumps(json.loads(r.data.decode('UTF8')))
             self.assertEqual(actual_response, expected_response)
 
+    def test_mwss_valid(self):
+        survey = json.loads(self.message['0.0.1'])
+        survey['survey_id'] = "134"
+        survey['collection']['instrument_id'] = "0001"
+        self.assertValid(survey)
+
     def test_unknown_version_invalid(self):
         unknown_version = json.loads(self.message['0.0.1'])
         unknown_version['version'] = "0.0.3"
@@ -126,6 +132,20 @@ class TestValidateService(unittest.TestCase):
         unknown_instrument['collection']['instrument_id'] = "999"
 
         self.assertInvalid(unknown_instrument)
+
+    def test_known_instrument_wrong_survey_invalid(self):
+        # RSI survey_id with Census instrument_id
+        known_instrument = json.loads(self.message['0.0.1'])
+        known_instrument['collection']['instrument_id'] = "household"
+
+        self.assertInvalid(known_instrument)
+
+    def test_known_instrument_correct_survey_valid(self):
+        # RSI survey_id with RSI instrument_id
+        known_instrument = json.loads(self.message['0.0.1'])
+        known_instrument['collection']['instrument_id'] = "0213"
+
+        self.assertValid(known_instrument)
 
     def test_empty_data_invalid(self):
         empty_data = json.loads(self.message['0.0.1'])
