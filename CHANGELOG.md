@@ -1,4 +1,6 @@
 ### Unreleased
+
+### 1.4.0 2017-02-16
   - Add change log
   - Update known instruments to correlate to specific surveys
   - Add QBS details for validation
