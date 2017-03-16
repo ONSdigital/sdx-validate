@@ -112,7 +112,7 @@ class TestValidateService(unittest.TestCase):
     def test_mwss_valid(self):
         survey = json.loads(self.message['0.0.1'])
         survey['survey_id'] = "134"
-        survey['collection']['instrument_id'] = "0001"
+        survey['collection']['instrument_id'] = "0005"
         self.assertValid(survey)
 
     def test_unknown_version_invalid(self):
