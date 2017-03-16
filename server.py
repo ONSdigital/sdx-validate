@@ -7,15 +7,17 @@ from structlog import wrap_logger
 import os
 from uuid import UUID
 
+__version__ = "1.4.1"
+
 app = Flask(__name__)
 
 logging.basicConfig(level=settings.LOGGING_LEVEL, format=settings.LOGGING_FORMAT)
 logger = wrap_logger(logging.getLogger(__name__))
-logger.debug("START")
+logger.debug("START", version=__version__)
 
 KNOWN_SURVEYS = {
     '023': ['0203', '0213', '0205', '0215', '0102', '0112'],
-    '134': ['0001'],
+    '134': ['0005'],
     '139': ['0001'],
     '144': ['0001'],
     'census': ['household', 'individual', 'communal']
