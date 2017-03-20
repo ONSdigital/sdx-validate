@@ -1,3 +1,4 @@
+from functools import partial
 from voluptuous import Schema, Required, Length, All, MultipleInvalid, Optional
 from dateutil import parser
 from flask import Flask, request, jsonify
@@ -16,11 +17,15 @@ logger = wrap_logger(logging.getLogger(__name__))
 logger.debug("START", version=__version__)
 
 KNOWN_SURVEYS = {
-    '023': ['0203', '0213', '0205', '0215', '0102', '0112'],
-    '134': ['0005'],
-    '139': ['0001'],
-    '144': ['0001'],
-    'census': ['household', 'individual', 'communal']
+    '0.0.1': {
+        '023': ['0203', '0213', '0205', '0215', '0102', '0112'],
+        '134': ['0005'],
+        '139': ['0001'],
+        '144': ['0001'],
+    },
+    '0.0.2': {
+        'census': ['household', 'individual', 'communal']
+    }
 }
 
 
@@ -30,8 +35,10 @@ def Timestamp(value):
     return parser.parse(value)
 
 
-def ValidSurveyId(value):
-    if value not in KNOWN_SURVEYS:
+def ValidSurveyId(value, version=None):
+    if not version:
+        raise AttributeError('No version number')
+    if value not in KNOWN_SURVEYS[version]:
         raise ValueError('Invalid survey id')
 
 
@@ -112,11 +119,11 @@ def validate():
         schema(json_data)
 
         survey_id = json_data['survey_id']
-        if survey_id not in KNOWN_SURVEYS:
+        if survey_id not in KNOWN_SURVEYS[version]:
             return client_error("Unsupported survey '%s'" % survey_id)
 
         instrument_id = json_data['collection']['instrument_id']
-        if instrument_id not in KNOWN_SURVEYS[survey_id]:
+        if instrument_id not in KNOWN_SURVEYS[version][survey_id]:
             return client_error("Unsupported instrument '%s'" % instrument_id)
 
     except MultipleInvalid as e:
@@ -139,6 +146,8 @@ def healthcheck():
 def get_schema(version):
 
     if version == "0.0.1":
+        valid_survey_id = partial(ValidSurveyId, version='0.0.1')
+
         collection_s = Schema({
             Required('period'): str,
             Required('exercise_sid'): str,
@@ -156,7 +165,7 @@ def get_schema(version):
             Required('version'): "0.0.1",
             Optional('tx_id'): All(str, ValidSurveyTxId),
             Required('origin'): "uk.gov.ons.edc.eq",
-            Required('survey_id'): All(str, ValidSurveyId),
+            Required('survey_id'): All(str, valid_survey_id),
             Required('submitted_at'): Timestamp,
             Required('collection'): collection_s,
             Required('metadata'): metadata_s,
@@ -166,6 +175,8 @@ def get_schema(version):
         return schema
 
     elif version == "0.0.2":
+        valid_survey_id = partial(ValidSurveyId, version='0.0.2')
+
         collection_s = Schema({
             Required('period'): str,
             Required('exercise_sid'): str,
@@ -183,7 +194,7 @@ def get_schema(version):
             Required('version'): "0.0.2",
             Optional('tx_id'): All(str, ValidSurveyTxId),
             Required('origin'): "uk.gov.ons.edc.eq",
-            Required('survey_id'): All(str, ValidSurveyId),
+            Required('survey_id'): All(str, valid_survey_id),
             Required('submitted_at'): Timestamp,
             Required('collection'): collection_s,
             Required('metadata'): metadata_s,
