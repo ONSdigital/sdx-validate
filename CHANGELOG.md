@@ -1,4 +1,5 @@
 ### Unreleased
+  - Validate ids based on schema
 
 ## 1.4.1 2017-03-15
   - Log version number on startup
