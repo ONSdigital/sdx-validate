@@ -153,6 +153,12 @@ class TestValidateService(unittest.TestCase):
 
         self.assertInvalid(empty_data)
 
+    def test_census_empty_data_invalid(self):
+        empty_data = json.loads(self.message['0.0.2'])
+        empty_data['data'] = ""
+
+        self.assertInvalid(empty_data)
+
     def test_non_guid_tx_id_invalid(self):
         wrong_tx = json.loads(self.message['0.0.1'])
         wrong_tx['tx_id'] = "999"
