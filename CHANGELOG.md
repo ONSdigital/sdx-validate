@@ -1,4 +1,5 @@
 ### Unreleased
+  - Validate data for different survey types
 
 ## 1.4.1 2017-03-15
   - Log version number on startup
