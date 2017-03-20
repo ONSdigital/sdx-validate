@@ -7,7 +7,7 @@ from structlog import wrap_logger
 import os
 from uuid import UUID
 
-__version__ = "1.4.0"
+__version__ = "1.4.1"
 
 app = Flask(__name__)
 
@@ -44,14 +44,23 @@ def ValidSurveyTxId(value):
 def ValidSurveyData(data):
     if isinstance(data, dict):
         for k, v in data.items():
-            if not isinstance(k, str) or not (isinstance(v, str) or isinstance(v, list)):
+            if not isinstance(k, str) or not isinstance(v, (str, list)):
                 raise ValueError('Invalid survey data')
     else:
         raise ValueError('Invalid survey data')
 
 
 def ValidateListSurveyData(data):
-    return True
+    if not isinstance(data, list):
+        raise ValueError('Invalid surey data')
+
+    for x in data:
+        if isinstance(x, dict):
+            for k, v in x.items():
+                if not isinstance(k, str) or not isinstance(v, (str, list, int)):
+                    raise ValueError('Invalid survey data')
+        else:
+            raise ValueError('Invalid survey data')
 
 
 @app.errorhandler(400)
