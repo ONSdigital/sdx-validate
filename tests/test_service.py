@@ -153,6 +153,37 @@ class TestValidateService(unittest.TestCase):
 
         self.assertInvalid(empty_data)
 
+    def test_census_empty_data_invalid(self):
+        empty_data = json.loads(self.message['0.0.2'])
+        empty_data['data'] = ""
+
+        self.assertInvalid(empty_data)
+
+    def test_census_dict_data_invalid(self):
+        dict_data = json.loads(self.message['0.0.2'])
+        dict_data['data'] = {'key1': 'value1', 'key2': 'value2'}
+
+        self.assertInvalid(dict_data)
+
+    def test_census_list_dict_plain_data_invalid(self):
+        data = json.loads(self.message['0.0.2'])
+        data['data'] = ["a", "b", "c", {"Some": "Thing"}]
+
+        self.assertInvalid(data)
+
+    def test_census_string_data_invalid(self):
+        data = json.loads(self.message['0.0.2'])
+        data = "abcd"
+
+        self.assertInvalid(data)
+
+    def test_census_binary_data_error(self):
+        data = json.loads(self.message['0.0.2'])
+        data['data'] = b'I am text.'
+
+        with self.assertRaises(TypeError):
+            self.validate_response(data)
+
     def test_non_guid_tx_id_invalid(self):
         wrong_tx = json.loads(self.message['0.0.1'])
         wrong_tx['tx_id'] = "999"
