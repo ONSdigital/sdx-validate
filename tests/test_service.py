@@ -13,6 +13,7 @@ class TestValidateService(unittest.TestCase):
            "type": "uk.gov.ons.edc.eq:surveyresponse",
            "origin": "uk.gov.ons.edc.eq",
            "survey_id": "023",
+           "completed": false,
            "version": "0.0.1",
            "collection": {
              "exercise_sid": "hfjdskf",
@@ -50,6 +51,7 @@ class TestValidateService(unittest.TestCase):
            "type": "uk.gov.ons.edc.eq:surveyresponse",
            "origin": "uk.gov.ons.edc.eq",
            "survey_id": "census",
+           "completed": true,
            "version": "0.0.2",
            "collection": {
              "exercise_sid": "hfjdskf",
@@ -205,3 +207,9 @@ class TestValidateService(unittest.TestCase):
         del message['tx_id']
 
         self.assertValid(message)
+
+    def test_completed_not_boolean_fails(self):
+        message = json.loads(self.message['0.0.1'])
+        message['completed'] = ''
+
+        self.assertInvalid(message)
