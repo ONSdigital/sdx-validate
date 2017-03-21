@@ -1,4 +1,5 @@
 ### Unreleased
+  - Validate ids based on schema
   - Validate data for different survey types
   - SUpport 'completed' flag in schema definitions
 
