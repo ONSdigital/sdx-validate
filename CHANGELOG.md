@@ -1,4 +1,5 @@
 ### Unreleased
+  - Validate ids based on schema
   - Validate data for different survey types
   - Support 'completed' flag in schema definitions. See https://github.com/ONSdigital/ons-schema-definitions/blob/master/docs/electronic_questionnaire_to_data_exchange.rst for more information.
 

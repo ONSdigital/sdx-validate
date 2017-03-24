@@ -129,8 +129,20 @@ class TestValidateService(unittest.TestCase):
 
         self.assertInvalid(unknown_survey)
 
+    def test_unknown_census_survey_invalid(self):
+        unknown_survey = json.loads(self.message['0.0.2'])
+        unknown_survey['survey_id'] = "025"
+
+        self.assertInvalid(unknown_survey)
+
     def test_unknown_instrument_invalid(self):
         unknown_instrument = json.loads(self.message['0.0.1'])
+        unknown_instrument['collection']['instrument_id'] = "999"
+
+        self.assertInvalid(unknown_instrument)
+
+    def test_unknown_census_instrument_invalid(self):
+        unknown_instrument = json.loads(self.message['0.0.2'])
         unknown_instrument['collection']['instrument_id'] = "999"
 
         self.assertInvalid(unknown_instrument)
@@ -142,10 +154,24 @@ class TestValidateService(unittest.TestCase):
 
         self.assertInvalid(known_instrument)
 
+    def test_known_census_instrument_wrong_survey_invalid(self):
+        # RSI survey_id with Census instrument_id
+        known_instrument = json.loads(self.message['0.0.2'])
+        known_instrument['collection']['instrument_id'] = "0203"
+
+        self.assertInvalid(known_instrument)
+
     def test_known_instrument_correct_survey_valid(self):
         # RSI survey_id with RSI instrument_id
         known_instrument = json.loads(self.message['0.0.1'])
         known_instrument['collection']['instrument_id'] = "0213"
+
+        self.assertValid(known_instrument)
+
+    def test_known_census_instrument_correct_survey_valid(self):
+        # RSI survey_id with RSI instrument_id
+        known_instrument = json.loads(self.message['0.0.2'])
+        known_instrument['collection']['instrument_id'] = "household"
 
         self.assertValid(known_instrument)
 
