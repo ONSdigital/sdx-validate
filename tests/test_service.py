@@ -213,3 +213,10 @@ class TestValidateService(unittest.TestCase):
         message['completed'] = ''
 
         self.assertInvalid(message)
+
+    def test_completed_key_missing(self):
+        message = json.loads(self.message['0.0.1'])
+        message.pop('completed')
+
+        self.assertRaises(KeyError, message.__getitem__, 'completed')
+        self.assertValid(message)
