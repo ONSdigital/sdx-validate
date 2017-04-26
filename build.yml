@@ -1,0 +1,13 @@
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: python
+    tag: latest
+
+inputs:
+- name: sdx-validate
+
+run:
+  path: ./sdx-validate/ci/test.sh

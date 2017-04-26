@@ -1,0 +1,13 @@
+resources:
+- name: sdx-validate
+  type: git
+  source:
+    uri: https://github.com/ONSDigital/sdx-validate
+    branch: spike/concourse
+
+jobs:
+  - name: test-app
+    plan:
+    - get: sdx-validate
+    - task: tests
+      file: sdx-validate/build.yml
