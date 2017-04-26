@@ -9,5 +9,6 @@ jobs:
   - name: test-app
     plan:
     - get: sdx-validate
+      trigger: true
     - task: tests
       file: sdx-validate/build.yml
