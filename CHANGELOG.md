@@ -4,6 +4,7 @@
   - Validate data for different survey types
   - Support 'completed' flag in schema definitions. See the [schema definitions](https://github.com/ONSdigital/ons-schema-definitions/blob/master/docs/electronic_questionnaire_to_data_exchange.rst) for more information.
   - Add concourse ci support
+  - cdcdcds
 
 ## 1.4.1 2017-03-15
   - Log version number on startup
