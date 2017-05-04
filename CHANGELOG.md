@@ -1,5 +1,11 @@
 ### Unreleased
 
+### 1.5.0 2017-05-04
+  - Support 'flushed' flag in schema definitions. Maintain backwards compatibility with older schema versions.
+  - Validate ids based on schema
+  - Validate data for different survey types
+  - Support 'completed' flag in schema definitions. See the [schema definitions](https://github.com/ONSdigital/ons-schema-definitions/blob/master/docs/electronic_questionnaire_to_data_exchange.rst) for more information.
+
 ## 1.4.1 2017-03-15
   - Log version number on startup
 

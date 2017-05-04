@@ -13,6 +13,8 @@ class TestValidateService(unittest.TestCase):
            "type": "uk.gov.ons.edc.eq:surveyresponse",
            "origin": "uk.gov.ons.edc.eq",
            "survey_id": "023",
+           "completed": true,
+           "flushed": false,
            "version": "0.0.1",
            "collection": {
              "exercise_sid": "hfjdskf",
@@ -50,6 +52,8 @@ class TestValidateService(unittest.TestCase):
            "type": "uk.gov.ons.edc.eq:surveyresponse",
            "origin": "uk.gov.ons.edc.eq",
            "survey_id": "census",
+           "completed": false,
+           "flushed": true,
            "version": "0.0.2",
            "collection": {
              "exercise_sid": "hfjdskf",
@@ -127,8 +131,20 @@ class TestValidateService(unittest.TestCase):
 
         self.assertInvalid(unknown_survey)
 
+    def test_unknown_census_survey_invalid(self):
+        unknown_survey = json.loads(self.message['0.0.2'])
+        unknown_survey['survey_id'] = "025"
+
+        self.assertInvalid(unknown_survey)
+
     def test_unknown_instrument_invalid(self):
         unknown_instrument = json.loads(self.message['0.0.1'])
+        unknown_instrument['collection']['instrument_id'] = "999"
+
+        self.assertInvalid(unknown_instrument)
+
+    def test_unknown_census_instrument_invalid(self):
+        unknown_instrument = json.loads(self.message['0.0.2'])
         unknown_instrument['collection']['instrument_id'] = "999"
 
         self.assertInvalid(unknown_instrument)
@@ -140,10 +156,24 @@ class TestValidateService(unittest.TestCase):
 
         self.assertInvalid(known_instrument)
 
+    def test_known_census_instrument_wrong_survey_invalid(self):
+        # RSI survey_id with Census instrument_id
+        known_instrument = json.loads(self.message['0.0.2'])
+        known_instrument['collection']['instrument_id'] = "0203"
+
+        self.assertInvalid(known_instrument)
+
     def test_known_instrument_correct_survey_valid(self):
         # RSI survey_id with RSI instrument_id
         known_instrument = json.loads(self.message['0.0.1'])
         known_instrument['collection']['instrument_id'] = "0213"
+
+        self.assertValid(known_instrument)
+
+    def test_known_census_instrument_correct_survey_valid(self):
+        # RSI survey_id with RSI instrument_id
+        known_instrument = json.loads(self.message['0.0.2'])
+        known_instrument['collection']['instrument_id'] = "household"
 
         self.assertValid(known_instrument)
 
@@ -152,6 +182,37 @@ class TestValidateService(unittest.TestCase):
         empty_data['data'] = ""
 
         self.assertInvalid(empty_data)
+
+    def test_census_empty_data_invalid(self):
+        empty_data = json.loads(self.message['0.0.2'])
+        empty_data['data'] = ""
+
+        self.assertInvalid(empty_data)
+
+    def test_census_dict_data_invalid(self):
+        dict_data = json.loads(self.message['0.0.2'])
+        dict_data['data'] = {'key1': 'value1', 'key2': 'value2'}
+
+        self.assertInvalid(dict_data)
+
+    def test_census_list_dict_plain_data_invalid(self):
+        data = json.loads(self.message['0.0.2'])
+        data['data'] = ["a", "b", "c", {"Some": "Thing"}]
+
+        self.assertInvalid(data)
+
+    def test_census_string_data_invalid(self):
+        data = json.loads(self.message['0.0.2'])
+        data = "abcd"
+
+        self.assertInvalid(data)
+
+    def test_census_binary_data_error(self):
+        data = json.loads(self.message['0.0.2'])
+        data['data'] = b'I am text.'
+
+        with self.assertRaises(TypeError):
+            self.validate_response(data)
 
     def test_non_guid_tx_id_invalid(self):
         wrong_tx = json.loads(self.message['0.0.1'])
@@ -173,4 +234,30 @@ class TestValidateService(unittest.TestCase):
         message = json.loads(self.message['0.0.1'])
         del message['tx_id']
 
+        self.assertValid(message)
+
+    def test_completed_not_boolean_fails(self):
+        message = json.loads(self.message['0.0.1'])
+        message['completed'] = ''
+
+        self.assertInvalid(message)
+
+    def test_flushed_not_boolean_fails(self):
+        message = json.loads(self.message['0.0.1'])
+        message['flushed'] = ''
+
+        self.assertInvalid(message)
+
+    def test_completed_key_missing_fails(self):
+        message = json.loads(self.message['0.0.1'])
+        message.pop('completed')
+
+        self.assertRaises(KeyError, message.__getitem__, 'completed')
+        self.assertValid(message)
+
+    def test_flushed_key_missing_fails(self):
+        message = json.loads(self.message['0.0.1'])
+        message.pop('flushed')
+
+        self.assertRaises(KeyError, message.__getitem__, 'flushed')
         self.assertValid(message)
