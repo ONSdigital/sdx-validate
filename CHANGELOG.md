@@ -1,4 +1,6 @@
 ### Unreleased
+
+### 1.5.0 2017-05-04
   - Support 'flushed' flag in schema definitions. Maintain backwards compatibility with older schema versions.
   - Validate ids based on schema
   - Validate data for different survey types
