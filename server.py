@@ -8,7 +8,7 @@ from structlog import wrap_logger
 import os
 from uuid import UUID
 
-__version__ = "1.4.1"
+__version__ = "1.5.0"
 
 app = Flask(__name__)
 
