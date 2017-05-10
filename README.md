@@ -72,3 +72,9 @@ r = requests.post('http://127.0.0.1:5000/validate', data=data_to_validate)
 
 is_valid = r.data.valid
 ```
+
+### License
+
+Copyright © 2016, Office for National Statistics (https://www.ons.gov.uk)
+
+Released under MIT license, see [LICENSE](LICENSE) for details.
