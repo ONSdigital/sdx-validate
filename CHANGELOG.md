@@ -1,4 +1,5 @@
 ### Unreleased
+  - Add license
 
 ### 1.5.0 2017-05-04
   - Support 'flushed' flag in schema definitions. Maintain backwards compatibility with older schema versions.
