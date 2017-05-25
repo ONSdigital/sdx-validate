@@ -22,6 +22,7 @@ KNOWN_SURVEYS = {
         '134': ['0005'],
         '139': ['0001'],
         '144': ['0001'],
+        'mci': ['refresh'],
     },
     '0.0.2': {
         'census': ['household', 'individual', 'communal']
@@ -160,7 +161,7 @@ def get_schema(version):
         collection_s = Schema({
             Required('period'): str,
             Required('exercise_sid'): str,
-            Required('instrument_id'): All(str, Length(max=4))
+            Required('instrument_id'): All(str, Length(max=7)) #TODO put back to 4 once EQ confirm name for mci-refresh.json
         })
 
         metadata_s = Schema({
