@@ -1,5 +1,7 @@
 # sdx-validate
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/f56f5893f92e4d608d6289f06d8f96fd)](https://www.codacy.com/app/ons-sdc/sdx-validate?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=ONSdigital/sdx-validate&amp;utm_campaign=Badge_Grade)
+
 The sde-validate app is used within the Office National of Statistics (ONS) for validating Survey Data Exchange (SDX) Surveys.
 
 ## Installation
