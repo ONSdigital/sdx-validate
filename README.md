@@ -6,7 +6,11 @@ The sde-validate app is used within the Office National of Statistics (ONS) for 
 
 ## Installation
 
-Using virtualenv and pip, create a new environment and install within using:
+Using virtualenv and pip, create a new environment and install the sdx-common library from a local directory:
+
+    $ pip install ./sdx-common
+
+Then from within the sdx-validate directory use:
 
     $ pip install -r requirements.txt
 
@@ -18,7 +22,7 @@ It's also possible to install within a container using docker. From the sdx-vali
 
 Start sdx-validate service using the following command:
 
-    python validate.py
+    python server.py
 
 If you've built the image under docker, you can start using the following:
 
