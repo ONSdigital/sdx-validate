@@ -1,4 +1,6 @@
 ### Unreleased
+
+### 1.6.0 2017-06-19
   - Add license
   - Add codacy badge
   - Adding sdx-common functionality
