@@ -1,22 +1,50 @@
 # sdx-validate
 
-The sde-validate app is used within the Office National of Statistics (ONS) for validating Survey Data Exchange (SDX) Surveys.
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/f56f5893f92e4d608d6289f06d8f96fd)](https://www.codacy.com/app/ons-sdc/sdx-validate?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=ONSdigital/sdx-validate&amp;utm_campaign=Badge_Grade) [![codecov](https://codecov.io/gh/ONSdigital/sdx-validate/branch/master/graph/badge.svg)](https://codecov.io/gh/ONSdigital/sdx-validate)
+
+The sdx-validate app is used within the Office National of Statistics (ONS) for validating Survey Data Exchange (SDX) Surveys.
 
 ## Installation
 
-Using virtualenv and pip, create a new environment and install within using:
+# Using pip
+
+Using virtualenv and pip, create a new environment and install the sdx-common library from a local directory:
+
+    $ pip install ./sdx-common
+
+Then from within the sdx-store directory use:
 
     $ pip install -r requirements.txt
 
-It's also possible to install within a container using docker. From the sdx-validate directory:
+It's also possible to install within a container using docker. From the sdx-store directory:
 
-    $ docker build -t sdx-validate .
+    $ docker build -t sdx-store .
+
+# Using make
+
+To install, use:
+
+```
+make build
+```
+
+To install using local sdx-common repo (requires SDX_HOME environment variable), use:
+
+```
+make dev
+```
+
+To run the test suite, use:
+
+```
+make test
+```
 
 ## Usage
 
 Start sdx-validate service using the following command:
 
-    python validate.py
+    python server.py
 
 If you've built the image under docker, you can start using the following:
 
@@ -72,3 +100,9 @@ r = requests.post('http://127.0.0.1:5000/validate', data=data_to_validate)
 
 is_valid = r.data.valid
 ```
+
+### License
+
+Copyright © 2016, Office for National Statistics (https://www.ons.gov.uk)
+
+Released under MIT license, see [LICENSE](LICENSE) for details.

@@ -2,17 +2,19 @@ from functools import partial
 from voluptuous import Schema, Required, Length, All, MultipleInvalid, Optional
 from dateutil import parser
 from flask import Flask, request, jsonify
-import settings
 import logging
 from structlog import wrap_logger
 import os
 from uuid import UUID
 
-__version__ = "1.5.0"
+from sdx.common.logger_config import logger_initial_config
+
+__version__ = "1.6.0"
 
 app = Flask(__name__)
 
-logging.basicConfig(level=settings.LOGGING_LEVEL, format=settings.LOGGING_FORMAT)
+logger_initial_config(service_name='sdx-validate')
+
 logger = wrap_logger(logging.getLogger(__name__))
 logger.debug("START", version=__version__)
 
