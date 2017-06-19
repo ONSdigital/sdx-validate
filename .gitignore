@@ -3,9 +3,10 @@ tests/__pycache__/
 __pycache__
 logs/validate.log
 *.pyc
-
 bin/
 include/
 lib/
 .Python
 pip-selfcheck.json
+coverage.xml
+.coverage
