@@ -1,0 +1,5 @@
+---
+applications:
+- name: sdx-validate
+  instances: 1
+  memory: 256M
