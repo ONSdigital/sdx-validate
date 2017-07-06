@@ -1,4 +1,5 @@
 ### Unreleased
+  - Update and pin version of sdx-common to 0.7.0
 
 ### 1.6.0 2017-06-19
   - Add license
