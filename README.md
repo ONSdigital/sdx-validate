@@ -4,23 +4,7 @@
 
 The sdx-validate app is used within the Office National of Statistics (ONS) for validating Survey Data Exchange (SDX) Surveys.
 
-## Installation
-
-# Using pip
-
-Using virtualenv and pip, create a new environment and install the sdx-common library from a local directory:
-
-    $ pip install ./sdx-common
-
-Then from within the sdx-store directory use:
-
-    $ pip install -r requirements.txt
-
-It's also possible to install within a container using docker. From the sdx-store directory:
-
-    $ docker build -t sdx-store .
-
-# Using make
+## Getting Started
 
 To install, use:
 
@@ -101,8 +85,8 @@ r = requests.post('http://127.0.0.1:5000/validate', data=data_to_validate)
 is_valid = r.data.valid
 ```
 
-### License
+## License
 
-Copyright © 2016, Office for National Statistics (https://www.ons.gov.uk)
+Copyright (c) 2016 Crown Copyright (Office for National Statistics)
 
 Released under MIT license, see [LICENSE](LICENSE) for details.
