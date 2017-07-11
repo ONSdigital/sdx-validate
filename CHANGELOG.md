@@ -1,4 +1,5 @@
 ### Unreleased
+  - Remove SDX_HOME from makefile and add release tag to git clone of sdx-common
 
 ### 1.7.0 2017-07-10
   - Update and pin version of sdx-common to 0.7.0

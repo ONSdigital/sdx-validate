@@ -3,7 +3,7 @@ python:
     - "3.5"
     - "3.4"
 before_install:
-    - git clone https://github.com/ONSdigital/sdx-common.git
+    - git clone --branch 0.7.0 https://github.com/ONSdigital/sdx-common.git
     - pip3 install ./sdx-common
 install:
     - pip install -r requirements.txt
