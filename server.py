@@ -30,7 +30,11 @@ KNOWN_SURVEYS = {
     },
     'feedback': {
         'feedback': ['1']
+<<<<<<< HEAD
     }
+=======
+     }
+>>>>>>> Add feedback support
 }
 
 
