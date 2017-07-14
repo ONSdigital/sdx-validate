@@ -1,9 +1,9 @@
 FROM onsdigital/flask-crypto
 
-ADD requirements.txt /app/requirements.txt
-ADD server.py /app/server.py
-ADD settings.py /app/settings.pys
-ADD startup.sh /app/startup.sh
+COPY requirements.txt /app/requirements.txt
+COPY server.py /app/server.py
+COPY settings.py /app/settings.pys
+COPY startup.sh /app/startup.sh
 
 # set working directory to /app/
 WORKDIR /app/
