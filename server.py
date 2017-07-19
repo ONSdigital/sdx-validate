@@ -129,7 +129,7 @@ def validate():
         bound_logger.debug("Validating json against schema")
         schema(json_data)
 
-        survey_id = json_data['survey_id']
+        survey_id = json_data.get('survey_id')
         if survey_id not in KNOWN_SURVEYS[version]:
             return client_error("Unsupported survey '%s'" % survey_id)
 
@@ -137,7 +137,7 @@ def validate():
         if instrument_id not in KNOWN_SURVEYS[version][survey_id]:
             return client_error("Unsupported instrument '%s'" % instrument_id)
 
-    except MultipleInvalid as e:
+    except (MultipleInvalid, KeyError) as e:
         return client_error(str(e))
 
     except Exception as e:
