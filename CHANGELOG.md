@@ -1,6 +1,7 @@
 ### Unreleased
   - Change all instances of ADD to COPY in Dockerfile
   - Remove use of SDX_HOME variable in makefile
+  - Missing or blank survey ids now return a 400 rather than 500
 
 ### 1.7.0 2017-07-10
   - Update and pin version of sdx-common to 0.7.0
