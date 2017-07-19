@@ -94,6 +94,7 @@ class TestValidateService(unittest.TestCase):
         actual_response = self.validate_response(data)
 
         self.assertEqual(actual_response['valid'], False)
+        self.assertEqual(actual_response['status'], 400)
 
     def assertValid(self, data):
         actual_response = self.validate_response(data)
@@ -128,6 +129,18 @@ class TestValidateService(unittest.TestCase):
     def test_unknown_survey_invalid(self):
         unknown_survey = json.loads(self.message['0.0.1'])
         unknown_survey['survey_id'] = "025"
+
+        self.assertInvalid(unknown_survey)
+
+    def test_blank_survey_invalid(self):
+        unknown_survey = json.loads(self.message['0.0.1'])
+        unknown_survey['survey_id'] = ""
+
+        self.assertInvalid(unknown_survey)
+
+    def test_missing_survey_invalid(self):
+        unknown_survey = json.loads(self.message['0.0.1'])
+        del unknown_survey['survey_id']
 
         self.assertInvalid(unknown_survey)
 
@@ -201,11 +214,21 @@ class TestValidateService(unittest.TestCase):
 
         self.assertInvalid(data)
 
-    def test_census_string_data_invalid(self):
-        data = json.loads(self.message['0.0.2'])
+    def test_string_data_invalid(self):
         data = "abcd"
 
         self.assertInvalid(data)
+
+    def test_no_data(self):
+        data = None
+
+        self.assertInvalid(data)
+
+    def test_server_error(self):
+        r = self.app.post(self.validate_endpoint, data=None)
+        actual_response = json.loads(r.data.decode('UTF8'))
+        self.assertEqual(actual_response['valid'], False)
+        self.assertEqual(actual_response['status'], 500)
 
     def test_census_binary_data_error(self):
         data = json.loads(self.message['0.0.2'])

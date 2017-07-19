@@ -107,11 +107,6 @@ def server_error(e):
 
 @app.route('/validate', methods=['POST'])
 def validate():
-    request.get_data()
-
-    if not request.data:
-        return client_error("Request payload was empty")
-
     try:
         json_data = request.get_json(force=True)
 
@@ -129,18 +124,21 @@ def validate():
         bound_logger.debug("Validating json against schema")
         schema(json_data)
 
-        survey_id = json_data['survey_id']
+        survey_id = json_data.get('survey_id')
         if survey_id not in KNOWN_SURVEYS[version]:
+            bound_logger.debug("Survey id is not known", survey_id=survey_id)
             return client_error("Unsupported survey '%s'" % survey_id)
 
         instrument_id = json_data['collection']['instrument_id']
         if instrument_id not in KNOWN_SURVEYS[version][survey_id]:
+            bound_logger.debug("Instrument ID is not known", survey_id=survey_id)
             return client_error("Unsupported instrument '%s'" % instrument_id)
 
-    except MultipleInvalid as e:
+    except (MultipleInvalid, KeyError, TypeError) as e:
+        logger.error("Client error", error=e)
         return client_error(str(e))
-
     except Exception as e:
+        logger.error("Server error", error=e)
         return server_error(e)
 
     metadata = json_data['metadata']
