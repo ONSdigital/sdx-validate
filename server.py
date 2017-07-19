@@ -107,11 +107,6 @@ def server_error(e):
 
 @app.route('/validate', methods=['POST'])
 def validate():
-    request.get_data()
-
-    if not request.data:
-        return client_error("Request payload was empty")
-
     try:
         json_data = request.get_json(force=True)
 
@@ -139,10 +134,9 @@ def validate():
             bound_logger.debug("Instrument ID is not known", survey_id=survey_id)
             return client_error("Unsupported instrument '%s'" % instrument_id)
 
-    except (MultipleInvalid, KeyError) as e:
+    except (MultipleInvalid, KeyError, TypeError) as e:
         logger.error("Client error", error=e)
         return client_error(str(e))
-
     except Exception as e:
         logger.error("Server error", error=e)
         return server_error(e)
