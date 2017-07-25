@@ -130,12 +130,12 @@ def validate():
         schema(json_data)
 
         survey_id = json_data.get('survey_id')
-        if survey_id not in KNOWN_SURVEYS[version]:
+        if survey_id not in KNOWN_SURVEYS.get(version, {}):
             bound_logger.debug("Survey id is not known", survey_id=survey_id)
             return client_error("Unsupported survey '%s'" % survey_id)
 
-        instrument_id = json_data['collection']['instrument_id']
-        if instrument_id not in KNOWN_SURVEYS[version][survey_id]:
+        instrument_id = json_data.get('collection').get('instrument_id')
+        if instrument_id not in KNOWN_SURVEYS.get(version, {}).get(survey_id, []):
             bound_logger.debug("Instrument ID is not known", survey_id=survey_id)
             return client_error("Unsupported instrument '%s'" % instrument_id)
 
@@ -148,7 +148,7 @@ def validate():
 
     if 'metadata' in json_data:
         metadata = json_data['metadata']
-        bound_logger.debug("Success", user_id=metadata['user_id'], ru_ref=metadata['ru_ref'])
+        bound_logger.debug("Success", user_id=metadata.get('user_id'), ru_ref=metadata.get('ru_ref'))
     else:
         bound_logger.debug("Success")
 
