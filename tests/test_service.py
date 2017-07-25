@@ -73,7 +73,30 @@ class TestValidateService(unittest.TestCase):
              "group_instance": 0,
              "answer_instance": 0
             }]
-        }'''
+        }''',
+
+        'feedback': '''{
+               "type": "uk.gov.ons.edc.eq:surveyresponse",
+               "origin": "uk.gov.ons.edc.eq",
+               "associated_survey": "023",
+               "survey_id": "feedback",
+               "completed": true,
+               "flushed": false,
+               "version": "feedback",
+               "collection": {
+                 "exercise_sid": "hfjdskf",
+                 "instrument_id": "1",
+                 "period": "0216"
+               },
+               "submitted_at": "2016-03-12T10:39:40Z",
+               "data": {
+                 "11": "01/04/2016",
+                 "21": "5",
+                 "27": "1",
+                 "146": "some comment"
+               },
+               "paradata": {}
+            }'''
     }
 
     def setUp(self):
@@ -108,7 +131,7 @@ class TestValidateService(unittest.TestCase):
 
     def test_validates_json(self):
         expected_response = json.dumps({"valid": True})
-        for v in ['0.0.1', '0.0.2']:
+        for v in ['0.0.1', '0.0.2', 'feedback']:
             m = self.message[v]
             r = self.app.post(self.validate_endpoint, data=m)
             actual_response = json.dumps(json.loads(r.data.decode('UTF8')))
@@ -150,6 +173,12 @@ class TestValidateService(unittest.TestCase):
 
         self.assertInvalid(unknown_survey)
 
+    def test_unknown_feedback_survey_invalid(self):
+        unknown_survey = json.loads(self.message['feedback'])
+        unknown_survey['survey_id'] = "025"
+
+        self.assertInvalid(unknown_survey)
+
     def test_unknown_instrument_invalid(self):
         unknown_instrument = json.loads(self.message['0.0.1'])
         unknown_instrument['collection']['instrument_id'] = "999"
@@ -158,6 +187,12 @@ class TestValidateService(unittest.TestCase):
 
     def test_unknown_census_instrument_invalid(self):
         unknown_instrument = json.loads(self.message['0.0.2'])
+        unknown_instrument['collection']['instrument_id'] = "999"
+
+        self.assertInvalid(unknown_instrument)
+
+    def test_unknown_feedback_instrument_invalid(self):
+        unknown_instrument = json.loads(self.message['feedback'])
         unknown_instrument['collection']['instrument_id'] = "999"
 
         self.assertInvalid(unknown_instrument)
@@ -190,6 +225,12 @@ class TestValidateService(unittest.TestCase):
 
         self.assertValid(known_instrument)
 
+    def test_known_feedback_instrument_correct_survey_valid(self):
+        known_instrument = json.loads(self.message['feedback'])
+        known_instrument['collection']['instrument_id'] = "1"
+
+        self.assertValid(known_instrument)
+
     def test_empty_data_invalid(self):
         empty_data = json.loads(self.message['0.0.1'])
         empty_data['data'] = ""
@@ -198,6 +239,12 @@ class TestValidateService(unittest.TestCase):
 
     def test_census_empty_data_invalid(self):
         empty_data = json.loads(self.message['0.0.2'])
+        empty_data['data'] = ""
+
+        self.assertInvalid(empty_data)
+
+    def test_feedback_empty_data_invalid(self):
+        empty_data = json.loads(self.message['feedback'])
         empty_data['data'] = ""
 
         self.assertInvalid(empty_data)

@@ -30,7 +30,7 @@ KNOWN_SURVEYS = {
     },
     'feedback': {
         'feedback': ['1']
-     }
+    }
 }
 
 
@@ -225,29 +225,29 @@ def get_schema(version):
         return schema
 
     elif version == "feedback":
-        # valid_survey_id = partial(ValidSurveyId, version='feedback')
-        #
-        # collection_s = Schema({
-        #     Required('period'): str,
-        #     Required('exercise_sid'): str,
-        #     Required('instrument_id'): All(str, Length(max=10))
-        # })
-        #
-        # schema = Schema({
-        #     Optional('heartbeat'): bool,
-        #     Required('type'): "uk.gov.ons.edc.eq:surveyresponse",
-        #     Required('version'): "feedback",
-        #     Optional('tx_id'): All(str, ValidSurveyTxId),
-        #     Required('origin'): "uk.gov.ons.edc.eq",
-        #     Required('survey_id'): All(str, valid_survey_id),
-        #     Required('survey_type'): All(str, Length(max=25),
-        #     Optional('completed'): bool,
-        #     Optional('flushed'): bool,
-        #     Required('submitted_at'): Timestamp,
-        #     Required('collection'): collection_s,
-        #     Required('data'): ValidateListSurveyData,
-        #     Optional('paradata'): object
-        # })
+        valid_survey_id = partial(ValidSurveyId, version='feedback')
+
+        collection_s = Schema({
+            Required('period'): str,
+            Required('exercise_sid'): str,
+            Required('instrument_id'): All(str, Length(max=10))
+        })
+
+        schema = Schema({
+            Optional('heartbeat'): bool,
+            Required('type'): "uk.gov.ons.edc.eq:surveyresponse",
+            Required('version'): "feedback",
+            Optional('tx_id'): All(str, ValidSurveyTxId),
+            Required('origin'): "uk.gov.ons.edc.eq",
+            Required('survey_id'): All(str, valid_survey_id),
+            Required('associated_survey'): All(str, Length(max=25)),
+            Optional('completed'): bool,
+            Optional('flushed'): bool,
+            Required('submitted_at'): Timestamp,
+            Required('collection'): collection_s,
+            Required('data'): ValidSurveyData,
+            Optional('paradata'): object
+        })
         return schema
 
     else:
