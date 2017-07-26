@@ -129,7 +129,7 @@ def validate():
             bound_logger.debug("Survey id is not known", survey_id=survey_id)
             return client_error("Unsupported survey '%s'" % survey_id)
 
-        instrument_id = json_data.get('collection').get('instrument_id')
+        instrument_id = json_data.get('collection', {}).get('instrument_id')
         if instrument_id not in KNOWN_SURVEYS.get(version, {}).get(survey_id, []):
             bound_logger.debug("Instrument ID is not known", survey_id=survey_id)
             return client_error("Unsupported instrument '%s'" % instrument_id)
