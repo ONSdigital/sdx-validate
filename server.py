@@ -119,12 +119,7 @@ def validate():
         if schema is None:
             return client_error("Unsupported schema version '%s'" % version)
 
-        if 'tx_id' in json_data:
-            tx_id = json_data['tx_id']
-
-            bound_logger = logger.bind(tx_id=tx_id)
-        else:
-            bound_logger = logger.bind(survey_id=json_data.get('survey_id'))
+        bound_logger = logger.bind(survey_id=json_data.get('survey_id'), tx_id=json_data.get('tx_id'))
 
         bound_logger.debug("Validating json against schema")
         schema(json_data)
