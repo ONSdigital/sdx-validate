@@ -7,6 +7,7 @@ build:
 test:
 	flake8 --exclude lib
 	python3 -m unittest tests/*.py
+	pip3 install -r test_requirements.txt
 
 clean:
 	rm -rf sdx-common
