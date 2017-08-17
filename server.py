@@ -56,7 +56,7 @@ def ValidSurveyTxId(value):
 def ValidSurveyData(data):
     if isinstance(data, dict):
         for k, v in data.items():
-            if not isinstance(k, str) or not isinstance(v, (str, list)):
+            if not isinstance(k, str) or not isinstance(v, (str, list, float)):
                 raise ValueError('Invalid survey data')
     else:
         raise ValueError('Invalid survey data')
