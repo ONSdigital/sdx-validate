@@ -69,7 +69,7 @@ def ValidateListSurveyData(data):
     for x in data:
         if isinstance(x, dict):
             for k, v in x.items():
-                if not isinstance(k, str) or not isinstance(v, (str, list, int)):
+                if not isinstance(k, str) or not isinstance(v, (str, list, int, float)):
                     raise ValueError('Invalid survey data')
         else:
             raise ValueError('Invalid survey data')
@@ -119,7 +119,8 @@ def validate():
         if schema is None:
             return client_error("Unsupported schema version '%s'" % version)
 
-        bound_logger = logger.bind(survey_id=json_data.get('survey_id'), tx_id=json_data.get('tx_id'))
+        bound_logger = logger.bind(survey_id=json_data.get(
+            'survey_id'), tx_id=json_data.get('tx_id'))
 
         bound_logger.debug("Validating json against schema")
         schema(json_data)
@@ -143,7 +144,8 @@ def validate():
 
     if 'metadata' in json_data:
         metadata = json_data['metadata']
-        bound_logger.debug("Success", user_id=metadata.get('user_id'), ru_ref=metadata.get('ru_ref'))
+        bound_logger.debug("Success", user_id=metadata.get(
+            'user_id'), ru_ref=metadata.get('ru_ref'))
     else:
         bound_logger.debug("Success")
 
