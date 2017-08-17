@@ -1,5 +1,6 @@
 ### Unreleased
   - Ensure integrity and version of library dependencies
+  - Accept floats and ints in data key
 
 ### 1.8.0 2017-07-25
   - Change all instances of ADD to COPY in Dockerfile
