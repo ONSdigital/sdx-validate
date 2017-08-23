@@ -1,4 +1,6 @@
 ### Unreleased
+
+### 1.9.0 2017-08-23
   - Ensure integrity and version of library dependencies
   - Accept floats and ints in data key
 
