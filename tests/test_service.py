@@ -76,26 +76,27 @@ class TestValidateService(unittest.TestCase):
         }''',
 
         'feedback': '''{
-               "type": "uk.gov.ons.edc.eq:surveyresponse",
-               "origin": "uk.gov.ons.edc.eq",
-               "associated_survey": "023",
-               "survey_id": "feedback",
-               "completed": true,
-               "flushed": false,
-               "version": "feedback",
-               "collection": {
-                 "exercise_sid": "hfjdskf",
-                 "instrument_id": "1",
-                 "period": "0216"
+               "type" : "uk.gov.ons.edc.eq:feedback",
+               "origin" : "uk.gov.ons.edc.eq",
+               "metadata": {
+                 "user_id": "789473423",
+                 "ru_ref": "432423423423"
                },
-               "submitted_at": "2016-03-12T10:39:40Z",
                "data": {
-                 "11": "01/04/2016",
-                 "21": "5",
-                 "27": "1",
-                 "146": "some comment"
+                 "url": "https://eq.onsdigital.uk/feedback",
+                 "name": "John Appleseed",
+                 "email": "john.appleseed@ons.gov.uk",
+                 "message": "Feedback message string"
                },
-               "paradata": {}
+               "submitted_at": "2016-03-07T15:28:05Z",
+               "collection": {
+                 "instrument_id": "0203",
+                 "exercise_sid": "739",
+                 "period": "2016-02-01"
+               },
+               "survey_id": "023",
+               "tx_id": "0f534ffc-9442-414c-b39f-a756b4adc6cb",
+               "version" : "0.0.1"
             }'''
     }
 
@@ -173,12 +174,6 @@ class TestValidateService(unittest.TestCase):
 
         self.assertInvalid(unknown_survey)
 
-    def test_unknown_feedback_survey_invalid(self):
-        unknown_survey = json.loads(self.message['feedback'])
-        unknown_survey['survey_id'] = "025"
-
-        self.assertInvalid(unknown_survey)
-
     def test_unknown_instrument_invalid(self):
         unknown_instrument = json.loads(self.message['0.0.1'])
         unknown_instrument['collection']['instrument_id'] = "999"
@@ -187,12 +182,6 @@ class TestValidateService(unittest.TestCase):
 
     def test_unknown_census_instrument_invalid(self):
         unknown_instrument = json.loads(self.message['0.0.2'])
-        unknown_instrument['collection']['instrument_id'] = "999"
-
-        self.assertInvalid(unknown_instrument)
-
-    def test_unknown_feedback_instrument_invalid(self):
-        unknown_instrument = json.loads(self.message['feedback'])
         unknown_instrument['collection']['instrument_id'] = "999"
 
         self.assertInvalid(unknown_instrument)
@@ -222,12 +211,6 @@ class TestValidateService(unittest.TestCase):
         # RSI survey_id with RSI instrument_id
         known_instrument = json.loads(self.message['0.0.2'])
         known_instrument['collection']['instrument_id'] = "household"
-
-        self.assertValid(known_instrument)
-
-    def test_known_feedback_instrument_correct_survey_valid(self):
-        known_instrument = json.loads(self.message['feedback'])
-        known_instrument['collection']['instrument_id'] = "1"
 
         self.assertValid(known_instrument)
 
