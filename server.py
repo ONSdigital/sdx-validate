@@ -27,9 +27,6 @@ KNOWN_SURVEYS = {
     },
     '0.0.2': {
         'census': ['household', 'individual', 'communal']
-    },
-    'feedback': {
-        'feedback': ['1']
     }
 }
 
@@ -113,27 +110,45 @@ def validate():
     try:
         json_data = request.get_json(force=True)
 
-        version = json_data['version']
-        schema = get_schema(version)
+        response_type = str(json_data['type'])
 
-        if schema is None:
-            return client_error("Unsupported schema version '%s'" % version)
+        if response_type.find("feedback") == -1:
+            version = json_data['version']
 
-        bound_logger = logger.bind(survey_id=json_data.get(
-            'survey_id'), tx_id=json_data.get('tx_id'))
+            schema = get_schema(version)
 
-        bound_logger.debug("Validating json against schema")
-        schema(json_data)
+            if schema is None:
+                return client_error("Unsupported schema version '%s'" % version)
 
-        survey_id = json_data.get('survey_id')
-        if survey_id not in KNOWN_SURVEYS.get(version, {}):
-            bound_logger.debug("Survey id is not known", survey_id=survey_id)
-            return client_error("Unsupported survey '%s'" % survey_id)
+            bound_logger = logger.bind(survey_id=json_data.get(
+                'survey_id'), tx_id=json_data.get('tx_id'))
 
-        instrument_id = json_data.get('collection', {}).get('instrument_id')
-        if instrument_id not in KNOWN_SURVEYS.get(version, {}).get(survey_id, []):
-            bound_logger.debug("Instrument ID is not known", survey_id=survey_id)
-            return client_error("Unsupported instrument '%s'" % instrument_id)
+            bound_logger.debug("Validating json against schema")
+            schema(json_data)
+
+            survey_id = json_data.get('survey_id')
+            if survey_id not in KNOWN_SURVEYS.get(version, {}):
+                bound_logger.debug("Survey id is not known", survey_id=survey_id)
+                return client_error("Unsupported survey '%s'" % survey_id)
+
+            instrument_id = json_data.get('collection', {}).get('instrument_id')
+            if instrument_id not in KNOWN_SURVEYS.get(version, {}).get(survey_id, []):
+                bound_logger.debug("Instrument ID is not known", survey_id=survey_id)
+                return client_error("Unsupported instrument '%s'" % instrument_id)
+
+            metadata = json_data.get('metadata')
+            bound_logger.debug("Success", user_id=metadata.get('user_id'), ru_ref=metadata.get('ru_ref'))
+
+        else:
+
+            schema = get_schema("feedback")
+
+            bound_logger = logger.bind(response_type="feedback", tx_id=json_data.get('tx_id'))
+
+            bound_logger.debug("Validating json against schema")
+            schema(json_data)
+
+            bound_logger.debug("Success")
 
     except (MultipleInvalid, KeyError, TypeError) as e:
         logger.error("Client error", error=e)
@@ -141,13 +156,6 @@ def validate():
     except Exception as e:
         logger.error("Server error", error=e)
         return server_error(e)
-
-    if 'metadata' in json_data:
-        metadata = json_data['metadata']
-        bound_logger.debug("Success", user_id=metadata.get(
-            'user_id'), ru_ref=metadata.get('ru_ref'))
-    else:
-        bound_logger.debug("Success")
 
     return jsonify({'valid': True})
 
@@ -222,7 +230,6 @@ def get_schema(version):
         return schema
 
     elif version == "feedback":
-        valid_survey_id = partial(ValidSurveyId, version='feedback')
 
         collection_s = Schema({
             Required('period'): str,
@@ -232,17 +239,17 @@ def get_schema(version):
 
         schema = Schema({
             Optional('heartbeat'): bool,
-            Required('type'): "uk.gov.ons.edc.eq:surveyresponse",
-            Required('version'): "feedback",
+            Required('type'): "uk.gov.ons.edc.eq:feedback",
             Optional('tx_id'): All(str, ValidSurveyTxId),
             Required('origin'): "uk.gov.ons.edc.eq",
-            Required('survey_id'): All(str, valid_survey_id),
-            Required('associated_survey'): All(str, Length(max=25)),
+            Required('survey_id'): str,
+            Required('version'): str,
             Optional('completed'): bool,
             Optional('flushed'): bool,
             Required('submitted_at'): Timestamp,
             Required('collection'): collection_s,
             Required('data'): ValidSurveyData,
+            Optional('metadata'): object,
             Optional('paradata'): object
         })
         return schema
