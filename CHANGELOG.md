@@ -1,5 +1,11 @@
 ### Unreleased
 
+### 1.10.1 2017-09-11
+  - Update version number in app
+
+### 1.10.0 2017-09-11
+  - Processing feedback surveys
+
 ### 1.9.1
   - Ensure integrity and version of library dependencies
   - Accept floats and ints in data key
