@@ -1,4 +1,5 @@
 ### Unreleased
+  - Permit reference period defaults in metadata
 
 ### 1.10.1 2017-09-11
   - Update version number in app

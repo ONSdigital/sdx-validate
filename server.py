@@ -178,7 +178,9 @@ def get_schema(version):
 
         metadata_s = Schema({
             Required('user_id'): str,
-            Required('ru_ref'): All(str, Length(12))
+            Required('ru_ref'): All(str, Length(12)),
+            Optional('ref_period_start_date'): Timestamp,
+            Optional('ref_period_end_date'): Timestamp
         })
 
         schema = Schema({

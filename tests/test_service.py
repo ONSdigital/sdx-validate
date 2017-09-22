@@ -144,6 +144,16 @@ class TestValidateService(unittest.TestCase):
         survey['collection']['instrument_id'] = "0005"
         self.assertValid(survey)
 
+    def test_rsi_metadata(self):
+        for inst_id in ["0102", "0112", "0203", "0205", "0213", "0215"]:
+            with self.subTest(inst_id=inst_id):
+                survey = json.loads(self.message["0.0.1"])
+                survey["survey_id"] = "023"
+                survey["collection"]["instrument_id"] = inst_id
+                survey["metadata"]["ref_period_start_date"] = "2016-04-01"
+                survey["metadata"]["ref_period_end_date"] = "2016-10-31"
+                self.assertValid(survey)
+
     def test_unknown_version_invalid(self):
         unknown_version = json.loads(self.message['0.0.1'])
         unknown_version['version'] = "0.0.3"
