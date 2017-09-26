@@ -1,4 +1,6 @@
 ### Unreleased
+
+### 1.11.0 2017-09-25
   - Permit reference period defaults in metadata
 
 ### 1.10.1 2017-09-11

@@ -9,7 +9,7 @@ from uuid import UUID
 
 from sdx.common.logger_config import logger_initial_config
 
-__version__ = "1.10.1"
+__version__ = "1.11.0"
 
 app = Flask(__name__)
 
