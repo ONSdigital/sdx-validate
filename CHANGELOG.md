@@ -1,4 +1,5 @@
 ### Unreleased
+  - Add all service specific config to config file
 
 ### 1.11.0 2017-09-25
   - Permit reference period defaults in metadata
