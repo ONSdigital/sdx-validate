@@ -1,6 +1,6 @@
 ### Unreleased
   - Add all service specific config to config file
-  - Change to use pytest to improve test output and code coverage stats
+  - Change to use pytest to improve test output and also changes to improve code coverage stats
 
 ### 1.11.0 2017-09-25
   - Permit reference period defaults in metadata
