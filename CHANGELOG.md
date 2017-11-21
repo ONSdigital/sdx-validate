@@ -1,4 +1,6 @@
 ### Unreleased
+
+### 1.12.0 2017-11-21
   - Add all service specific config to config file
   - Change to use pytest to improve test output and also changes to improve code coverage stats
   - Add Cloudfoundry deployment files
