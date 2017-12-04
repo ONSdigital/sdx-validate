@@ -164,6 +164,7 @@ def validate():
     return jsonify({'valid': True})
 
 
+@app.route('/info', methods=['GET'])
 @app.route('/healthcheck', methods=['GET'])
 def healthcheck():
     return jsonify({'status': 'OK'})
