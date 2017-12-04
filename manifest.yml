@@ -1,3 +1,5 @@
 applications:
 - name: sdx-validate
   buildpack: python_buildpack
+  health-check-http-endpoint: /info
+  health-check-type: http
