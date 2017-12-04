@@ -1,4 +1,5 @@
 ### Unreleased
+  - Add /info healthcheck endpoint
 
 ### 1.12.0 2017-11-21
   - Add all service specific config to config file
