@@ -1,4 +1,5 @@
 ### Unreleased
+  - Remove support for heartbeat survey
   - Add /info healthcheck endpoint
 
 ### 1.12.0 2017-11-21
