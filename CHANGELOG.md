@@ -1,4 +1,6 @@
 ### Unreleased
+
+### 1.13.0 2017-01-04
   - Add /info healthcheck endpoint
 
 ### 1.12.0 2017-11-21
