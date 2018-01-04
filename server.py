@@ -189,7 +189,6 @@ def get_schema(version):
         })
 
         schema = Schema({
-            Optional('heartbeat'): bool,
             Required('type'): "uk.gov.ons.edc.eq:surveyresponse",
             Required('version'): "0.0.1",
             Optional('tx_id'): All(str, ValidSurveyTxId),
@@ -220,7 +219,6 @@ def get_schema(version):
         })
 
         schema = Schema({
-            Optional('heartbeat'): bool,
             Required('type'): "uk.gov.ons.edc.eq:surveyresponse",
             Required('version'): "0.0.2",
             Optional('tx_id'): All(str, ValidSurveyTxId),
@@ -245,7 +243,6 @@ def get_schema(version):
         })
 
         schema = Schema({
-            Optional('heartbeat'): bool,
             Required('type'): "uk.gov.ons.edc.eq:feedback",
             Optional('tx_id'): All(str, ValidSurveyTxId),
             Required('origin'): "uk.gov.ons.edc.eq",
