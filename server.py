@@ -32,12 +32,6 @@ KNOWN_SURVEYS = {
     '0.0.2': {
         'census': ['household', 'individual', 'communal']
     },
-    '0.0.3': {
-        '023': ['0203', '0213', '0205', '0215', '0102', '0112'],
-        '134': ['0005'],
-        '139': ['0001'],
-        '144': ['0001'],
-    }
 }
 
 
@@ -200,6 +194,8 @@ def get_schema(version):
             Optional('tx_id'): All(str, ValidSurveyTxId),
             Required('origin'): "uk.gov.ons.edc.eq",
             Required('survey_id'): All(str, valid_survey_id),
+            Optional('case_id'): str,
+            Optional('case_ref'): str,
             Optional('completed'): bool,
             Optional('flushed'): bool,
             Required('submitted_at'): Timestamp,
@@ -230,38 +226,6 @@ def get_schema(version):
             Optional('tx_id'): All(str, ValidSurveyTxId),
             Required('origin'): "uk.gov.ons.edc.eq",
             Required('survey_id'): All(str, valid_survey_id),
-            Optional('completed'): bool,
-            Optional('flushed'): bool,
-            Required('submitted_at'): Timestamp,
-            Required('collection'): collection_s,
-            Required('metadata'): metadata_s,
-            Required('data'): ValidateListSurveyData,
-            Optional('paradata'): object
-        })
-        return schema
-
-    elif version == "0.0.3":
-        valid_survey_id = partial(ValidSurveyId, version='0.0.3')
-
-        collection_s = Schema({
-            Required('period'): str,
-            Required('exercise_sid'): str,
-            Required('instrument_id'): All(str, Length(max=10))
-        })
-
-        metadata_s = Schema({
-            Required('user_id'): str,
-            Required('ru_ref'): str
-        })
-
-        schema = Schema({
-            Required('type'): "uk.gov.ons.edc.eq:surveyresponse",
-            Required('version'): "0.0.3",
-            Optional('tx_id'): All(str, ValidSurveyTxId),
-            Required('origin'): "uk.gov.ons.edc.eq",
-            Required('survey_id'): All(str, valid_survey_id),
-            Optional('case_id'): str,
-            Optional('case_ref'): str,
             Optional('completed'): bool,
             Optional('flushed'): bool,
             Required('submitted_at'): Timestamp,

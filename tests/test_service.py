@@ -75,47 +75,6 @@ class TestValidateService(unittest.TestCase):
             }]
         }''',
 
-        '0.0.3': '''{
-           "tx_id": "0f534ffc-9442-414c-b39f-a756b4adc6cb",
-           "type": "uk.gov.ons.edc.eq:surveyresponse",
-           "origin": "uk.gov.ons.edc.eq",
-           "survey_id": "023",
-           "case_id": "case_id",
-           "case_ref": "case_ref",
-           "completed": true,
-           "flushed": false,
-           "version": "0.0.3",
-           "collection": {
-             "exercise_sid": "hfjdskf",
-             "instrument_id": "0203",
-             "period": "0216"
-           },
-           "submitted_at": "2016-03-12T10:39:40Z",
-           "metadata": {
-             "user_id": "789473423",
-             "ru_ref": "12345678901A"
-           },
-           "data": [{
-             "11": "01/04/2016",
-             "12": "31/10/2016",
-             "20": "1800000",
-             "51": 84.00,
-             "52": 10,
-             "53": "73",
-             "54": "24",
-             "50": "205",
-             "22": "705000",
-             "23": "900",
-             "24": "74",
-             "25": "50",
-             "26": "100",
-             "21": "60000",
-             "27": "7400",
-             "146": "some comment"
-           }],
-           "paradata": {}
-        }''',
-
         'feedback': '''{
                "type" : "uk.gov.ons.edc.eq:feedback",
                "origin" : "uk.gov.ons.edc.eq",
@@ -172,7 +131,7 @@ class TestValidateService(unittest.TestCase):
 
     def test_validates_json(self):
         expected_response = json.dumps({"valid": True})
-        for v in ['0.0.1', '0.0.2', '0.0.3', 'feedback']:
+        for v in ['0.0.1', '0.0.2', 'feedback']:
             m = self.message[v]
             r = self.app.post(self.validate_endpoint, data=m)
             actual_response = json.dumps(json.loads(r.data.decode('UTF8')))
@@ -366,17 +325,17 @@ class TestValidateService(unittest.TestCase):
         self.assertValid(message)
 
     def test_case_id_and_case_ref_passes(self):
-        message = json.loads(self.message['0.0.3'])
+        message = json.loads(self.message['0.0.1'])
         self.assertValid(message)
 
     def test_case_id_not_str_fails(self):
-        message = json.loads(self.message['0.0.3'])
+        message = json.loads(self.message['0.0.1'])
         message['case_id'] = {}
 
         self.assertInvalid(message)
 
     def test_case_ref_not_str_fails(self):
-        message = json.loads(self.message['0.0.3'])
+        message = json.loads(self.message['0.0.1'])
         message['case_ref'] = {}
 
         self.assertInvalid(message)
