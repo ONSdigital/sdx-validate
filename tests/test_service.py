@@ -97,7 +97,7 @@ class TestValidateService(unittest.TestCase):
                "survey_id": "023",
                "tx_id": "0f534ffc-9442-414c-b39f-a756b4adc6cb",
                "version" : "0.0.1"
-            }'''
+            }''',
     }
 
     def setUp(self):
@@ -122,7 +122,6 @@ class TestValidateService(unittest.TestCase):
 
     def assertValid(self, data):
         actual_response = self.validate_response(data)
-
         self.assertEqual(actual_response['valid'], True)
 
     def test_validate_fail_sends_500(self):
@@ -324,3 +323,19 @@ class TestValidateService(unittest.TestCase):
 
         self.assertRaises(KeyError, message.__getitem__, 'flushed')
         self.assertValid(message)
+
+    def test_case_id_and_case_ref_passes(self):
+        message = json.loads(self.message['0.0.1'])
+        self.assertValid(message)
+
+    def test_case_id_not_str_fails(self):
+        message = json.loads(self.message['0.0.1'])
+        message['case_id'] = {}
+
+        self.assertInvalid(message)
+
+    def test_case_ref_not_str_fails(self):
+        message = json.loads(self.message['0.0.1'])
+        message['case_ref'] = {}
+
+        self.assertInvalid(message)

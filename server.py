@@ -31,7 +31,7 @@ KNOWN_SURVEYS = {
     },
     '0.0.2': {
         'census': ['household', 'individual', 'communal']
-    }
+    },
 }
 
 
@@ -194,6 +194,8 @@ def get_schema(version):
             Optional('tx_id'): All(str, ValidSurveyTxId),
             Required('origin'): "uk.gov.ons.edc.eq",
             Required('survey_id'): All(str, valid_survey_id),
+            Optional('case_id'): str,
+            Optional('case_ref'): str,
             Optional('completed'): bool,
             Optional('flushed'): bool,
             Required('submitted_at'): Timestamp,

@@ -1,4 +1,5 @@
 ### Unreleased
+ - Support case_id and case_ref fields
 
 ### 2.0.0 2017-01-04
   - Remove support for heartbeat survey
