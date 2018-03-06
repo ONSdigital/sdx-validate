@@ -1,4 +1,6 @@
 ### Unreleased
+
+### 2.1.0 2018-03-06
  - Support case_id and case_ref fields
 
 ### 2.0.0 2017-01-04
