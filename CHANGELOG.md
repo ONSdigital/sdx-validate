@@ -1,4 +1,5 @@
 ### Unreleased
+ - Support MBS surveys
 
 ### 2.1.0 2018-03-06
  - Support case_id and case_ref fields
