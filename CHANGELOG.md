@@ -1,4 +1,7 @@
 ### Unreleased
+ -
+
+### 2.2.0 2018-05-21
  - Support MBS surveys
 
 ### 2.1.0 2018-03-06
