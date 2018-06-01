@@ -54,7 +54,10 @@ KNOWN_SURVEYS = {
         "139": ["0001"],
         "144": ["0001"],
     },
-    "0.0.2": {"census": ["household", "individual", "communal"]},
+    "0.0.2": {
+        "census": ["household", "individual", "communal"],
+        "lms": ["1"]
+    },
 }
 
 

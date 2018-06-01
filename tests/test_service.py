@@ -345,3 +345,10 @@ class TestValidateService(unittest.TestCase):
         message['case_ref'] = {}
 
         self.assertInvalid(message)
+
+    def test_valid_lms(self):
+        survey = json.loads(self.message['0.0.2'])
+        survey['survey_id'] = "lms"
+        survey['collection']['instrument_id'] = "1"
+
+        self.assertValid(survey)

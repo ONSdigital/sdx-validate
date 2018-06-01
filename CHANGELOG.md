@@ -1,5 +1,5 @@
 ### Unreleased
- -
+ - Support LMS survey
 
 ### 2.2.0 2018-05-21
  - Support MBS surveys
