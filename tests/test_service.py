@@ -255,11 +255,11 @@ class TestValidateService(unittest.TestCase):
 
         self.assertInvalid(dict_data)
 
-    def test_census_list_dict_plain_data_invalid(self):
+    def test_census_list_dict_plain_data_valid(self):
         data = json.loads(self.message['0.0.2'])
         data['data'] = ["a", "b", "c", {"Some": "Thing"}]
 
-        self.assertInvalid(data)
+        self.assertValid(data)
 
     def test_string_data_invalid(self):
         data = "abcd"

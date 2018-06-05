@@ -99,15 +99,6 @@ def ValidateListSurveyData(data):
     if not isinstance(data, list):
         raise ValueError("Invalid surey data")
 
-    for x in data:
-        if isinstance(x, dict):
-            for k, v in x.items():
-                if not isinstance(k, str) or (v and not isinstance(v, (str, list, int, float))):
-                    raise ValueError("Invalid survey data")
-
-        else:
-            raise ValueError("Invalid survey data")
-
 
 @app.errorhandler(400)
 def errorhandler_400(e):
