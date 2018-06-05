@@ -99,15 +99,6 @@ def ValidateListSurveyData(data):
     if not isinstance(data, list):
         raise ValueError("Invalid surey data")
 
-    for x in data:
-        if isinstance(x, dict):
-            for k, v in x.items():
-                if not isinstance(k, str) or not isinstance(v, (str, list, int, float)):
-                    raise ValueError("Invalid survey data")
-
-        else:
-            raise ValueError("Invalid survey data")
-
 
 @app.errorhandler(400)
 def errorhandler_400(e):
@@ -257,7 +248,14 @@ def get_schema(version):
             }
         )
 
-        metadata_s = Schema({Required("user_id"): str, Required("ru_ref"): str})
+        metadata_s = Schema(
+            {
+                Required("user_id"): str,
+                Optional("ru_ref"): str,
+                Optional("ref_period_start_date"): Timestamp,
+                Optional("ref_period_end_date"): Timestamp,
+            }
+        )
 
         schema = Schema(
             {
@@ -269,6 +267,8 @@ def get_schema(version):
                 Optional("completed"): bool,
                 Optional("flushed"): bool,
                 Required("submitted_at"): Timestamp,
+                Required("case_id"): str,
+                Required("case_ref"): str,
                 Required("collection"): collection_s,
                 Required("metadata"): metadata_s,
                 Required("data"): ValidateListSurveyData,

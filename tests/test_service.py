@@ -49,6 +49,8 @@ class TestValidateService(unittest.TestCase):
 
         '0.0.2': '''{
            "tx_id": "0f534ffc-9442-414c-b39f-a756b4adc6cb",
+           "case_ref": "1000000000000001",
+           "case_id": "4c0bc9ec-06d4-4f66-88b6-2e42b79f17b3",
            "type": "uk.gov.ons.edc.eq:surveyresponse",
            "origin": "uk.gov.ons.edc.eq",
            "survey_id": "census",
@@ -253,11 +255,11 @@ class TestValidateService(unittest.TestCase):
 
         self.assertInvalid(dict_data)
 
-    def test_census_list_dict_plain_data_invalid(self):
+    def test_census_list_dict_plain_data_valid(self):
         data = json.loads(self.message['0.0.2'])
         data['data'] = ["a", "b", "c", {"Some": "Thing"}]
 
-        self.assertInvalid(data)
+        self.assertValid(data)
 
     def test_string_data_invalid(self):
         data = "abcd"
