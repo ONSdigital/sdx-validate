@@ -1,4 +1,5 @@
 from server import app
+import server
 
 import unittest
 import json
@@ -7,6 +8,7 @@ import json
 class TestValidateService(unittest.TestCase):
 
     validate_endpoint = "/validate"
+    healthcheck_endpoint = "/healthcheck"
     message = {
         '0.0.1': '''{
            "tx_id": "0f534ffc-9442-414c-b39f-a756b4adc6cb",
@@ -108,6 +110,11 @@ class TestValidateService(unittest.TestCase):
         # propagate the exceptions to the test client
         self.app.testing = True
 
+    def test_unexpected_payload_data(self):
+        survey = json.loads(self.message['0.0.1'])
+        survey['unexpected_data'] = 'unexpected'
+        self.assertInvalid(survey)
+
     def validate_response(self, data):
         dumped_json = json.dumps(data)
 
@@ -160,6 +167,11 @@ class TestValidateService(unittest.TestCase):
                 survey["metadata"]["ref_period_start_date"] = "2016-04-01"
                 survey["metadata"]["ref_period_end_date"] = "2016-10-31"
                 self.assertValid(survey)
+
+    def test_missing_version(self):
+        survey = json.loads(self.message['0.0.1'])
+        with self.assertRaises(AttributeError):
+            server.ValidSurveyId('123')
 
     def test_unknown_version_invalid(self):
         unknown_version = json.loads(self.message['0.0.1'])
@@ -276,6 +288,11 @@ class TestValidateService(unittest.TestCase):
         actual_response = json.loads(r.data.decode('UTF8'))
         self.assertEqual(actual_response['valid'], False)
         self.assertEqual(actual_response['status'], 500)
+
+    def test_healthcheck(self):
+        r = self.app.get(self.healthcheck_endpoint)
+        actual_response = json.loads(r.data.decode('UTF8'))
+        self.assertEqual(actual_response, {"status": "OK"})
 
     def test_census_binary_data_error(self):
         data = json.loads(self.message['0.0.2'])
