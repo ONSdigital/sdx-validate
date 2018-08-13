@@ -168,10 +168,19 @@ class TestValidateService(unittest.TestCase):
                 survey["metadata"]["ref_period_end_date"] = "2016-10-31"
                 self.assertValid(survey)
 
+    def test_invalid_version(self):
+        survey = json.loads(self.message['0.0.1'])
+        with self.assertRaises(KeyError):
+            server.ValidSurveyId(survey['survey_id'], '0.0.3')
+
     def test_missing_version(self):
         survey = json.loads(self.message['0.0.1'])
         with self.assertRaises(AttributeError):
-            server.ValidSurveyId('123')
+            server.ValidSurveyId(survey['survey_id'])
+
+    def test_valid_version(self):
+        survey = json.loads(self.message['0.0.1'])
+        server.ValidSurveyId(survey['survey_id'], survey['version'])
 
     def test_unknown_version_invalid(self):
         unknown_version = json.loads(self.message['0.0.1'])
