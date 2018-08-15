@@ -1,4 +1,6 @@
 ### Unreleased
+
+### 2.4.0 2018-08-15
  - Update dependency versions
  - Add support for 'started_at' field in payload
 
