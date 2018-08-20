@@ -158,6 +158,22 @@ class TestValidateService(unittest.TestCase):
         survey['collection']['instrument_id'] = "0255"
         self.assertValid(survey)
 
+    def test_qcas_valid(self):
+        survey = json.loads(self.message['0.0.1'])
+        survey['survey_id'] = "019"
+
+        survey['collection']['instrument_id'] = "0018"
+        self.assertValid(survey)
+
+        survey['collection']['instrument_id'] = "0019"
+        self.assertValid(survey)
+
+        survey['collection']['instrument_id'] = "0020"
+        self.assertValid(survey)
+
+        survey['collection']['instrument_id'] = "0021"
+        self.assertInvalid(survey)
+
     def test_rsi_metadata(self):
         for inst_id in ["0102", "0112", "0203", "0205", "0213", "0215"]:
             with self.subTest(inst_id=inst_id):
