@@ -1,5 +1,8 @@
 ### Unreleased
 
+### 2.5.0 2018-09-11
+ - Add support for QCAS
+
 ### 2.4.0 2018-08-15
  - Update dependency versions
  - Add support for 'started_at' field in payload
