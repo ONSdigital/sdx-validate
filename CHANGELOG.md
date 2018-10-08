@@ -1,4 +1,6 @@
 ### Unreleased
+ - Added support for LMS 2.
+ - Made case_ref optional for version 0.0.2 surveys
 
 ### 2.5.0 2018-09-11
  - Add support for QCAS
