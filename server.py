@@ -57,7 +57,7 @@ KNOWN_SURVEYS = {
     },
     "0.0.2": {
         "census": ["household", "individual", "communal"],
-        "lms": ["1"]
+        "lms": ["1", "2"]
     },
 }
 
@@ -271,7 +271,7 @@ def get_schema(version):
                 Optional("started_at"): Timestamp,
                 Required("submitted_at"): Timestamp,
                 Required("case_id"): str,
-                Required("case_ref"): str,
+                Optional("case_ref"): str,
                 Required("collection"): collection_s,
                 Required("metadata"): metadata_s,
                 Required("data"): ValidateListSurveyData,
