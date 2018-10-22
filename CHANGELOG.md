@@ -1,4 +1,6 @@
 ### Unreleased
+
+### 2.6.0 2018-10-22
  - Added support for LMS 2.
  - Made case_ref optional for version 0.0.2 surveys
 
