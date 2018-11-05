@@ -57,7 +57,8 @@ KNOWN_SURVEYS = {
     },
     "0.0.2": {
         "census": ["household", "individual", "communal"],
-        "lms": ["1", "2"]
+        "lms": ["1", "2"],
+        "281": ["0001"],
     },
 }
 

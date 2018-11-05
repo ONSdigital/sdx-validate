@@ -1,4 +1,5 @@
 ### Unreleased
+ - Added support for D-Trades
 
 ### 2.6.0 2018-10-22
  - Added support for LMS 2.
