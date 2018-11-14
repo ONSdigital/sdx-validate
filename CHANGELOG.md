@@ -1,4 +1,6 @@
 ### Unreleased
+
+### 2.7.0 2018-11-13
  - Added support for D-Trades
 
 ### 2.6.0 2018-10-22
