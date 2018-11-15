@@ -1,4 +1,5 @@
 ### Unreleased
+ - Added support for E-Commerce
 
 ### 2.7.0 2018-11-13
  - Added support for D-Trades
