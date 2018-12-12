@@ -1,4 +1,6 @@
 ### Unreleased
+
+### 2.8.0 2018-12-12
  - Added support for E-Commerce
 
 ### 2.7.0 2018-11-13
