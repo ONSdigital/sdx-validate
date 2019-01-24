@@ -1,4 +1,5 @@
 ### Unreleased
+ - Add support for NI version of UKIS
 
 ### 2.8.0 2018-12-12
  - Added support for E-Commerce
