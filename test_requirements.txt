@@ -1,7 +1,7 @@
-flake8
-mock
-six
-pytest
-pytest-cov
-pytest-html
+flake8==3.6.0
+mock==2.0.0
+six==1.12.0
+pytest==4.1.1
+pytest-cov==2.6.1
+pytest-html==1.20.0
 
