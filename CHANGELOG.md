@@ -1,5 +1,8 @@
 ### Unreleased
  - Add support for QPSES
+
+### 2.9.0 2019-02-08
+ - Added support for UKIS
  - Add support for NI version of UKIS
 
 ### 2.8.0 2018-12-12
