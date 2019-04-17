@@ -1,4 +1,5 @@
 ### Unreleased
+ - Added support for QSI (Stocks)
 
 ### 2.10.0 2019-02-19
  - Add support for QPSES
