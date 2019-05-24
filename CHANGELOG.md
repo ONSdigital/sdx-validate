@@ -1,5 +1,7 @@
 ### Unreleased
  - Added support for QSI (Stocks)
+ - Remove python 3.4 and 3.5 from travis builds
+ - Add python 3.7 to travis builds
 
 ### 2.10.0 2019-02-19
  - Add support for QPSES
