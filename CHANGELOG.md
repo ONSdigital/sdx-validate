@@ -1,4 +1,5 @@
 ### Unreleased
+ - Update packages, including Werkzeug that had a security vulnerability
 
 ### 2.11.0 2019-05-31
  - Added support for QSI (Stocks)
