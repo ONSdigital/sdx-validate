@@ -1,4 +1,5 @@
 ### Unreleased
+ - Add python 3.8 to travis builds
 
 ### 2.11.1 2019-09-26
  - Update packages, including Werkzeug that had a security vulnerability
