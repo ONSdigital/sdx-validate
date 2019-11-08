@@ -11,7 +11,7 @@ from uuid import UUID
 import settings
 
 
-__version__ = "2.11.1"
+__version__ = "2.11.2"
 
 app = Flask(__name__)
 
