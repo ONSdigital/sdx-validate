@@ -1,4 +1,5 @@
 ### Unreleased
+ - Add E-commerce formtypes 0001 and 0002
 
 ### 2.11.2 2019-11-08
  - Add python 3.8 to travis builds
