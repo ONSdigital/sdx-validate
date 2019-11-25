@@ -1,4 +1,6 @@
 ### Unreleased
+
+### 2.12.0 2019-11-25
  - Add E-commerce formtypes 0001 and 0002
 
 ### 2.11.2 2019-11-08
