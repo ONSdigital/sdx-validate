@@ -98,9 +98,11 @@ def errorhandler_400(e):
     return client_error(repr(e))
 
 
-def client_error(error=None):
+def client_error(error=None, contains_null_character=None):
     logger.error("Validation error", exception=error)
     message = {"valid": False, "status": 400, "message": error, "uri": request.url}
+    if contains_null_character:
+        message['contains_null_character'] = True
     resp = jsonify(message)
     resp.status_code = 400
 
@@ -134,9 +136,11 @@ def validate():
             if schema is None:
                 return client_error("Unsupported schema version '%s'" % version)
 
-            bound_logger = logger.bind(
-                survey_id=json_data.get("survey_id"), tx_id=json_data.get("tx_id")
-            )
+            metadata = json_data.get("metadata")
+            bound_logger = logger.bind(survey_id=json_data.get("survey_id"),
+                                       tx_id=json_data.get("tx_id"),
+                                       user_id=metadata.get("user_id"),
+                                       ru_ref=metadata.get("ru_ref"))
 
             bound_logger.debug("Validating json against schema")
             schema(json_data)
@@ -144,34 +148,29 @@ def validate():
             survey_id = json_data.get("survey_id")
             if survey_id not in KNOWN_SURVEYS.get(version, {}):
                 bound_logger.debug("Survey id is not known", survey_id=survey_id)
-                return client_error("Unsupported survey '%s'" % survey_id)
+                return client_error(f"Unsupported survey '{survey_id}'")
 
             instrument_id = json_data.get("collection", {}).get("instrument_id")
             if instrument_id not in KNOWN_SURVEYS.get(version, {}).get(survey_id, []):
                 bound_logger.debug("Instrument ID is not known", survey_id=survey_id)
-                return client_error("Unsupported instrument '%s'" % instrument_id)
-
-            metadata = json_data.get("metadata")
-            bound_logger.debug(
-                "Success",
-                user_id=metadata.get("user_id"),
-                ru_ref=metadata.get("ru_ref"),
-            )
-
+                return client_error(f"Unsupported instrument '{instrument_id}'")
         else:
-
             schema = get_schema("feedback")
 
-            bound_logger = logger.bind(
-                response_type="feedback", tx_id=json_data.get("tx_id")
-            )
-
+            bound_logger = logger.bind(response_type="feedback", tx_id=json_data.get("tx_id"))
             bound_logger.debug("Validating json against schema")
             schema(json_data)
 
-            bound_logger.debug("Success")
 
-    except (MultipleInvalid, KeyError, TypeError) as e:
+        # We had a null character appear the submission that appeared as the literal string '\u0000' as opposed
+        # to the encoded version of the character which is why we're using a double backslash in the if statement
+        if '\\u0000' in str(json_data):
+            bound_logger.debug("Null character found in submission")
+            return client_error("Null character found in submission", contains_null_character=True)
+
+        bound_logger.debug("Success")
+
+    except (MultipleInvalid, KeyError, TypeError, ValueError) as e:
         logger.error("Client error", error=e)
         return client_error(str(e))
 
