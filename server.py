@@ -72,8 +72,6 @@ def ValidSurveyId(value, version=None):
 
 # Parses a UUID, throwing a value error
 # if unrecognised
-
-
 def ValidSurveyTxId(value):
     return UUID(value, version=4)
 
@@ -154,6 +152,14 @@ def validate():
             if instrument_id not in KNOWN_SURVEYS.get(version, {}).get(survey_id, []):
                 bound_logger.debug("Instrument ID is not known", survey_id=survey_id)
                 return client_error(f"Unsupported instrument '{instrument_id}'")
+
+            if json_data.get('data'):
+                if json_data['version'] == '0.0.1':
+                    for value in json_data['data'].values():
+                        if r'\u0000' in str(value):
+                            bound_logger.debug("Null character found in submission")
+                            return client_error("Null character found in submission", contains_null_character=True)
+
         else:
             schema = get_schema("feedback")
 
@@ -161,12 +167,9 @@ def validate():
             bound_logger.debug("Validating json against schema")
             schema(json_data)
 
-
-        # We had a null character appear the submission that appeared as the literal string '\u0000' as opposed
-        # to the encoded version of the character which is why we're using a double backslash in the if statement
-        if '\\u0000' in str(json_data):
-            bound_logger.debug("Null character found in submission")
-            return client_error("Null character found in submission", contains_null_character=True)
+            if r'\u0000' in str(json_data['data']['message']):
+                bound_logger.debug("Null character found in feedback")
+                return client_error("Null character found in feedback", contains_null_character=True)
 
         bound_logger.debug("Success")
 
