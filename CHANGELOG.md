@@ -1,4 +1,5 @@
 ### Unreleased
+ - Validate submission for null characters  (`\u0000`) and fail validation if present
 
 ### 2.12.0 2019-11-25
  - Add E-commerce formtypes 0001 and 0002
