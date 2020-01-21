@@ -127,6 +127,7 @@ class TestValidateService(unittest.TestCase):
         actual_response = self.validate_response(data)
 
         self.assertEqual(actual_response['valid'], False)
+        self.assertNotIn('contains_null_character', actual_response)
         self.assertEqual(actual_response['status'], 400)
 
     def assertValid(self, data):
@@ -396,3 +397,13 @@ class TestValidateService(unittest.TestCase):
         survey['collection']['instrument_id'] = "1"
 
         self.assertValid(survey)
+
+    def test_submission_with_null_character(self):
+        """Tests for the decoded version of the null character in the submission (\u0000)"""
+        message = json.loads(self.message['0.0.1'])
+        message['data']['146'] = r'This is a comment with a null character \u0000'
+        response = self.validate_response(message)
+
+        self.assertEqual(response['valid'], False)
+        self.assertEqual(response['contains_null_character'], True)
+        self.assertEqual(response['status'], 400)
