@@ -157,7 +157,7 @@ def validate():
                 if json_data['version'] == '0.0.1':
                     for value in json_data['data'].values():
                         if r'\u0000' in str(value):
-                            bound_logger.debug("Null character found in submission")
+                            bound_logger.error("Null character found in submission")
                             return client_error("Null character found in submission", contains_null_character=True)
 
         else:
@@ -168,7 +168,7 @@ def validate():
             schema(json_data)
 
             if r'\u0000' in str(json_data['data']['message']):
-                bound_logger.debug("Null character found in feedback")
+                bound_logger.error("Null character found in feedback")
                 return client_error("Null character found in feedback", contains_null_character=True)
 
         bound_logger.debug("Success")
