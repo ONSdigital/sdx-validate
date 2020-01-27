@@ -1,4 +1,6 @@
 ### Unreleased
+
+### 2.13.0 2020-01-27
  - Validate submission for null characters  (`\u0000`) and fail validation if present
 
 ### 2.12.0 2019-11-25
