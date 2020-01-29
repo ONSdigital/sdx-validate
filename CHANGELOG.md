@@ -1,8 +1,10 @@
 ### Unreleased
 
+### 2.14.0 2020-01-30
+ - Add Vacancies formtypes (182, 183, 184, 185)
+
 ### 2.13.0 2020-01-27
  - Validate submission for null characters  (`\u0000`) and fail validation if present
- - Add Vacancies formtypes (182, 183, 184, 185)
 
 ### 2.12.0 2019-11-25
  - Add E-commerce formtypes 0001 and 0002
