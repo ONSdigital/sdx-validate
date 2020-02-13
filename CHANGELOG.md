@@ -1,4 +1,5 @@
 ### Unreleased
+ - Amend vacancies formtypes to correct ones
 
 ### 2.14.0 2020-01-30
  - Add Vacancies formtypes (182, 183, 184, 185)
