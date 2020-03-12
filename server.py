@@ -100,11 +100,9 @@ def errorhandler_400(e):
     return client_error(repr(e))
 
 
-def client_error(error=None, contains_null_character=None):
+def client_error(error=None):
     logger.error("Validation error", exception=error)
     message = {"valid": False, "status": 400, "message": error, "uri": request.url}
-    if contains_null_character:
-        message['contains_null_character'] = True
     resp = jsonify(message)
     resp.status_code = 400
 
@@ -157,23 +155,12 @@ def validate():
                 bound_logger.debug("Instrument ID is not known", survey_id=survey_id)
                 return client_error(f"Unsupported instrument '{instrument_id}'")
 
-            if json_data.get('data'):
-                if json_data['version'] == '0.0.1':
-                    for value in json_data['data'].values():
-                        if r'\u0000' in str(value):
-                            bound_logger.error("Null character found in submission")
-                            return client_error("Null character found in submission", contains_null_character=True)
-
         else:
             schema = get_schema("feedback")
 
             bound_logger = logger.bind(response_type="feedback", tx_id=json_data.get("tx_id"))
             bound_logger.debug("Validating json against schema")
             schema(json_data)
-
-            if r'\u0000' in str(json_data['data']['message']):
-                bound_logger.error("Null character found in feedback")
-                return client_error("Null character found in feedback", contains_null_character=True)
 
         bound_logger.debug("Success")
 
