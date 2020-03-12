@@ -1,4 +1,6 @@
 ### Unreleased
+ - Remove changes made in 2.13.0.  It didn't work as expected.
+
 ### 2.14.1 2020-03-03
  - Amend vacancies formtypes to correct ones
 
