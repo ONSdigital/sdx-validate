@@ -1,4 +1,5 @@
 ### Unreleased
+ - Add corvid-19 survey formtype (283)
 
 ### 2.14.2 2020-03-18
  - Remove changes made in 2.13.0.  It didn't work as expected.
