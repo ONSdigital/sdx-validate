@@ -1,8 +1,9 @@
 ### Unreleased
+ - Add covid-19 survey formtype 0002 (283)
  - Add construction survey (228)
 
 ### 2.15.0 2020-03-20
- - Add corvid-19 survey formtype (283)
+ - Add covid-19 survey formtype (283)
 
 ### 2.14.2 2020-03-18
  - Remove changes made in 2.13.0.  It didn't work as expected.
