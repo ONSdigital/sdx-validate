@@ -1,4 +1,5 @@
 ### Unreleased
+ - Remove Cloudfoundry deployment files
 
 ### 2.16.0 2020-04-17
  - Add covid-19 survey formtype 0002 (283)
