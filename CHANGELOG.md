@@ -1,10 +1,8 @@
 ### Unreleased
 
-### 2.16.2 2020-05-21
- - Updated packages
-
 ### 2.16.1 2020-05-13
  - Remove Cloudfoundry deployment files
+ - Updated packages
 
 ### 2.16.0 2020-04-17
  - Add covid-19 survey formtype 0002 (283)
