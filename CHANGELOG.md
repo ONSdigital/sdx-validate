@@ -1,4 +1,5 @@
 ### Unreleased
+ - Add construction survey formtype 0002 (228)
 
 ### 2.16.2 2020-05-21
  - Updated packages
