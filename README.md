@@ -4,29 +4,40 @@
 
 The sdx-validate app is used within the Office National of Statistics (ONS) for validating Survey Data Exchange (SDX) Surveys.
 
-## Getting Started
+## Installation
+This application presently installs required packages from requirements files:
+- `requirements.txt`: packages for the application, with hashes for all packages: see https://pypi.org/project/hashin/
+- `test-requirements.txt`: packages for testing and linting
 
-To install, use:
+It's also best to use `pyenv` and `pyenv-virtualenv`, to build in a virtual environment with the currently recommended version of Python.  To install these, see:
+- https://github.com/pyenv/pyenv
+- https://github.com/pyenv/pyenv-virtualenv
+- (Note that the homebrew version of `pyenv` is easiest to install, but can lag behind the latest release of Python.)
 
+### Getting started
+Once your virtual environment is set, install the requirements:
+```shell
+$ make build
 ```
-make build
-```
 
-To run the test suite, use:
-
-```
-make test
+To test, first run `make build` as above, then run:
+```shell
+$ make test
 ```
 
 ## Usage
 
 Start sdx-validate service using the following command:
 
-    python server.py
+```shell
+$ python server.py
+```
 
 If you've built the image under docker, you can start using the following:
 
-    docker run -p 5000:5000 sdx-validate
+```shell
+$ docker run -p 5000:5000 sdx-validate
+```
 
 sdx-validate by default binds to port 5000 on localhost and exposes two endpoints:
 - '/validate' returns a json response with attributes "valid" and "error" to indicate whether the json is valid and if not what error has been thrown during validation.
