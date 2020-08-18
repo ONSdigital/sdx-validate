@@ -159,6 +159,16 @@ class TestValidateService(unittest.TestCase):
         survey['collection']['instrument_id'] = "0255"
         self.assertValid(survey)
 
+    def test_epe_valid(self):
+        survey = json.loads(self.message['0.0.1'])
+        survey['survey_id'] = "147"
+
+        survey['collection']['instrument_id'] = "0003"
+        self.assertValid(survey)
+
+        survey['collection']['instrument_id'] = "0004"
+        self.assertValid(survey)
+
     def test_qcas_valid(self):
         survey = json.loads(self.message['0.0.1'])
         survey['survey_id'] = "019"
