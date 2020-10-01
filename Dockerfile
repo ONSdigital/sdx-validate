@@ -1,15 +1,12 @@
-FROM onsdigital/flask-crypto
+FROM python:3.8-slim
 
-COPY requirements.txt /app/requirements.txt
-COPY server.py /app/server.py
-COPY settings.py /app/settings.pys
-COPY startup.sh /app/startup.sh
+RUN apt update && apt install -y build-essential curl gunicorn
 
-# set working directory to /app/
-WORKDIR /app/
+WORKDIR /app
 
 EXPOSE 5000
 
+COPY . /app
 RUN pip3 install --no-cache-dir -U -r /app/requirements.txt
 
-ENTRYPOINT ./startup.sh
+CMD ["gunicorn", "-b", "0.0.0.0:5000", "--workers", "8", "--worker-class", "gevent", "--worker-connections" ,"1000", "--timeout", "30", "--keep-alive", "2", "app:server"]
