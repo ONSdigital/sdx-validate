@@ -4,6 +4,7 @@ RUN apt update && apt install -y build-essential curl gunicorn
 
 WORKDIR /app
 
+ENV PORT=5000
 EXPOSE 5000
 
 COPY . /app
