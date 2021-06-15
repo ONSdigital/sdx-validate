@@ -1,6 +1,6 @@
 # sdx-validate
 
-[![Build Status](https://github.com/ONSdigital/sdx-validate/workflows/Build/badge.svg)](https://github.com/ONSdigital/sdx-validate) [![codecov](https://codecov.io/gh/ONSdigital/sdx-validate/branch/master/graph/badge.svg)](https://codecov.io/gh/ONSdigital/sdx-validate)
+[![Build Status](https://github.com/ONSdigital/sdx-validate/workflows/Build/badge.svg)](https://github.com/ONSdigital/sdx-validate)
 
 The sdx-validate app is used within the Office National of Statistics (ONS) for validating Survey Data Exchange (SDX) Surveys.
 
